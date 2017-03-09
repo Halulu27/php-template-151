@@ -9,8 +9,8 @@ switch($_SERVER["REQUEST_URI"]) {
 	case "/":
 		(new halulu27\Controller\IndexController($tmpl))->homepage();
 		break;
-	case "/testroute":
-		echo "test";
+	case "/login":
+		(new halulu27\Controller\LoginController($tmpl))->showLogin();
 		break;
 	//case "/test/upload":
 		//if(file_put_contents(__DIR__ . "/../../upload/test.txt", "Mein erster Upload")) {
