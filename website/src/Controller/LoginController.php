@@ -41,9 +41,11 @@ class LoginController
   	
   	if($stmt->rowCount() == 1)
   	{
-  		echo "Login Successful";
+  		$_SESSION["email"] = $data["email"];
+  		header("Location: /");
   	}
   	else {
+  		echo $this->template->render("login.html.php", ["email" => $data["email"]]);
   		echo "Login failed";
   	}
   }

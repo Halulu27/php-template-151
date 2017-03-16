@@ -1,6 +1,8 @@
 <?php
 
 error_reporting(E_ALL);
+session_start();
+
 
 require_once("../vendor/autoload.php");
 $tmpl = new halulu27\SimpleTemplateEngine(__DIR__ . "/../templates/");
