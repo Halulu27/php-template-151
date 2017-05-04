@@ -10,6 +10,12 @@ class Factory
 		return new Factory(parse_ini_file($filename, true));
 	}
 	
+	private function getTwigEngine()
+	{
+		$loader = new \Twig_Loader_Filesystem(__DIR__ . "/../templates/");
+		return new \Twig_Environment($loader);
+	}
+	
 	public function __construct(array $config)
 	{
 		$this->config = $config;
@@ -22,7 +28,7 @@ class Factory
 	
 	public function getIndexController()
 	{
-		return new Controller\IndexController($this->getTemplateEngine());
+		return new Controller\IndexController($this->getTwigEngine());
 	}
 	
 	public function getLoginController()

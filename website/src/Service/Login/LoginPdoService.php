@@ -26,14 +26,3 @@ class LoginPdoService implements LoginService
 		}
 	}
 }
-
-/*
-class PdoService
-{
-	protected $pdo;
-	
-	public function __construct(\PDO $pdo)
-	{
-		$this->pdo = $pdo;
-	}
-}*/

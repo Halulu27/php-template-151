@@ -14,7 +14,7 @@ class IndexController
   /**
    * @param halulu27\SimpleTemplateEngine
    */
-  public function __construct(SimpleTemplateEngine $template)
+  public function __construct(\Twig_Environment $template)
   {
      $this->template = $template;
   }
@@ -24,6 +24,6 @@ class IndexController
   }
 
   public function greet($name) {
-  	echo $this->template->render("hello.html.php", ["name" => $name]);
+  	echo $this->template->render("hello.html.twig", ["name" => $name]);
   }
 }
