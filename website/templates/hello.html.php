@@ -1,2 +1,2 @@
-Das kommt aus meinem ersten Template<br />
+Das kommt aus meinem zweister Template<br />
 Hallo <?= htmlspecialchars($name)?>
