@@ -1,24 +1,27 @@
 <?php
-
 error_reporting(E_ALL);
+use halulu27\Factory;
 session_start();
 
-
 require_once("../vendor/autoload.php");
-$tmpl = new halulu27\SimpleTemplateEngine(__DIR__ . "/../templates/");
-$pdo = new \PDO(
-		"mysql:host=mariadb;dbname=app;charset=utf8",
-		"root",
-		"my-secret-pw",
-		[\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
-		);
+$factory = halulu27\Factory::createFromInitFile(__DIR__. "/../config.ini");
+$tmpl = $factory->getTemplateEngine();
+
+$pdo = $factory->getPdo();
+$loginService = $factory->getLoginService();
 
 switch($_SERVER["REQUEST_URI"]) {
 	case "/":
-		(new halulu27\Controller\IndexController($tmpl))->homepage();
+		$factory->getIndexController()->homepage();
+	//->	//$factory->getMailer()->send(
+			//	Swift_Message::newInstance("Subject")
+				//->setFrom(["gibz.module.151@gmail.com" => "Your Name"])
+				//->setTo(["foobar@gmail.com" => "Foos Name"])
+				//->setBody("Here is the message itself")
+				//);
 		break;
 	case "/login":
-		$cnt = (new halulu27\Controller\LoginController($tmpl, $pdo));
+		$cnt = $factory->getLoginController();
 		if ($_SERVER["REQUEST_METHOD"] === "GET")
 		{
 			$cnt->showLogin();
@@ -38,7 +41,7 @@ switch($_SERVER["REQUEST_URI"]) {
 	default:
 		$matches = [];
 		if(preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
-			(new halulu27\Controller\IndexController($tmpl))->greet($matches[1]);
+			$factory->getIndexController()->greet($matches[1]);
 			break;
 		}
 		echo "Not Found";

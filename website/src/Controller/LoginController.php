@@ -3,6 +3,7 @@
 namespace halulu27\Controller;
 
 use halulu27\SimpleTemplateEngine;
+use halulu27\Service\Login\LoginService;
 
 class LoginController 
 {
@@ -10,15 +11,15 @@ class LoginController
    * @var halulu27\SimpleTemplateEngine Template engines to render output
    */
   private $template;
-  private $pdo;
+  private $loginService;
   
   /**
    * @param halulu27\SimpleTemplateEngine
    */
-  public function __construct(SimpleTemplateEngine $template, \PDO $pdo)
+  public function __construct(SimpleTemplateEngine $template, LoginService $loginService)
   {
      $this->template = $template;
-     $this->pdo = $pdo;
+     $this->loginService = $loginService;
   }
   
   public function showLogin()
@@ -32,16 +33,16 @@ class LoginController
   	{
   		$this->showLogin();
   		return;
-  	}
+  	} 	
   	
-  	$stmt = $this->pdo->prepare("SELECT * FROM user WHERE email=? AND password=?");
-  	$stmt->bindValue(1, $data["email"]);
-  	$stmt->bindValue(2, $data["password"]);
-  	$stmt->execute();
+  	//$stmt = $this->pdo->prepare("SELECT * FROM user WHERE email=? AND password=?");
+  	//$stmt->bindValue(1, $data["email"]);
+  	//$stmt->bindValue(2, $data["password"]);
+  	//$stmt->execute();
   	
-  	if($stmt->rowCount() == 1)
+  	if($this->loginService->authenticate($data["email"], $data["password"]))
   	{
-  		$_SESSION["email"] = $data["email"];
+  		//$_SESSION["email"] = $data["email"];
   		header("Location: /");
   	}
   	else {
