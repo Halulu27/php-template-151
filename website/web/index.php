@@ -10,7 +10,9 @@ $tmpl = $factory->getTemplateEngine();
 $pdo = $factory->getPdo();
 $loginService = $factory->getLoginService();
 
-switch($_SERVER["REQUEST_URI"]) {
+
+
+switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/":
 		$factory->getIndexController()->homepage();
 	//->	//$factory->getMailer()->send(
@@ -19,6 +21,10 @@ switch($_SERVER["REQUEST_URI"]) {
 				//->setTo(["foobar@gmail.com" => "Foos Name"])
 				//->setBody("Here is the message itself")
 				//);
+		break;
+	case "/register/test":
+		echo true;
+		return true;
 		break;
 	case "/login":
 		$cnt = $factory->getLoginController();
@@ -31,6 +37,17 @@ switch($_SERVER["REQUEST_URI"]) {
 			$cnt->login($_POST);
 		}
 		break;
+	case "/register":
+		$cnt = $factory->getLoginController();
+		if ($_SERVER["REQUEST_METHOD"] === "POST")
+		{
+			$cnt->register($_POST);
+		}
+		else
+		{
+			$cnt->showRegister();
+		}
+		break;		
 	//case "/test/upload":
 		//if(file_put_contents(__DIR__ . "/../../upload/test.txt", "Mein erster Upload")) {
 			//echo "It worked";
@@ -38,8 +55,17 @@ switch($_SERVER["REQUEST_URI"]) {
 			//echo "Error happened";
 		//}
 		//break;	
+		
+	case "/register/checkemail":
+		return $factory->getLoginController()->checkEmail($_REQUEST["email"]);
+		break;
+		
+	case "/register/checkusername":
+		return $factory->getLoginController()->checkUsername($_REQUEST["username"]);
+		break;
+		
 	default:
-		$matches = [];
+		$matches = [];		
 		if(preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
 			$factory->getIndexController()->greet($matches[1]);
 			break;

@@ -33,7 +33,7 @@ class Factory
 	
 	public function getLoginController()
 	{
-		return new Controller\LoginController($this->getTemplateEngine(), $this->getLoginService());
+		return new Controller\LoginController($this->getTwigEngine(), $this->getLoginService());
 	}
 	
 	public function getMailer()
@@ -48,7 +48,7 @@ class Factory
 	public function getPdo()
 	{
 		return new \PDO(
-				"mysql:host=mariadb;dbname=app;charset=utf8",
+				"mysql:host=mariadb;dbname=instafornotrich;charset=utf8",
 				$this->config["database"]["user"],
 				"my-secret-pw",
 				[\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
@@ -58,5 +58,5 @@ class Factory
 	public function getLoginService()
 	{
 		return new Service\Login\LoginPdoService($this->getPdo());
-	}	
+	}
 }

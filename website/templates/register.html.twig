@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{ parent() }} - Registration
+{% endblock %}
+
+{% block content %}
+<form action="/register" method="post">
+  Email:<br/>
+  <input type="text" id="email" name="email" value="{{ email }}" /><br/>
+  username:<br/>
+  <input type="text" id="username" name="username" value="{{ username }}"/><br/>
+  Password:<br/>
+  <input type="text" name="password" value="" /><br/><br/>
+  <div>{{ errormessage }}</div>
+  <input type="submit" value="Submit" />
+</form>
+
+<script type="text/javascript">
+	$("#email").change(function (e) {
+	    var emailInput = $(e.target);
+	    $.ajax({
+	      type: 'POST',
+	      url: '/register/checkemail',
+	      data: {'email' : emailInput.val()},
+	      success: function (response){
+	  		if (response == true)
+				console.log("email existiert" + response);
+			else
+				console.log("email nicht vorhanden" + response);
+	      },
+	      error: function(e){
+	        console.log("Da isch edn error passiert! ;(");
+	        console.log(e);
+	      }
+	    });
+	  });
+</script>
+
+<script type="text/javascript">	 
+  $("#username").change(function (e) {
+  	var usernameInput = $(e.target);
+  	$.ajax({
+  		type: 'POST',
+      	url: '/register/checkusername',
+      	data: {'username' : usernameInput.val()},
+      	success: function (answer){
+  			if (answer == true)
+				console.log("username existiert" + answer);
+			else
+				console.log("username nicht vorhanden" + answer);
+      	},
+      	error: function(e){
+        	console.log("Error while checking username! ;(");
+	        console.log(e);
+      	}
+		});
+  	});
+</script>
+{% endblock %}
+
+
+
