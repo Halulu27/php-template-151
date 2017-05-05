@@ -44,12 +44,14 @@ class LoginPdoService implements LoginService
 	
 	public function registration($username, $email, $password)
 	{		
-		$stmt = $this->pdo->prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?); ");
+		$stmt = $this->pdo->prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?);");
 		$stmt->bindValue(1, $username);
 		$stmt->bindValue(2, $email);
 		$stmt->bindValue(3, $password);
 		if ($stmt->execute())
 		{
+			$_SESSION["email"] = $email;
+			$_SESSION["username"] = $username;
 			return true;
 		}
 		else
@@ -60,14 +62,33 @@ class LoginPdoService implements LoginService
 	
 	public function authenticate($username, $password)
 	{
-		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE email=? AND password=?");
+		$statement = "";
+		if (!$this->emailExists($username) AND !$this->usernameExists($username))
+		{
+			return false;
+		}
+		else 
+		{
+			if ($this->usernameExists($username))
+			{
+				$statement = "SELECT * FROM user WHERE username=? AND password=?";
+			}
+			else 
+			{
+				$statement = "SELECT * FROM user WHERE email=? AND password=?";
+			}
+		}
+		
+		$stmt = $this->pdo->prepare($statement);
 		$stmt->bindValue(1, $username);
 		$stmt->bindValue(2, $password);
 		$stmt->execute();
 		
-		if($stmt->rowCount() == 1)
+		if ($stmt->rowCount() == 1)
 		{
-			$_SESSION["email"] = $username;
+			$result = $stmt->fetch();
+			$_SESSION["email"] = $result["email"][0];
+			$_SESSION["username"] = $result["username"][0];
 			return true;
 		}
 		else {
@@ -75,3 +96,6 @@ class LoginPdoService implements LoginService
 		}
 	}
 }
+
+
+

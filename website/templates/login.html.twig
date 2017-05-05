@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{ parent() }} - Login
+{% endblock %}
+
+{% block content %}
+<form action="/login" method="post">
+  <label>Email OR username:</label>
+  <input type="text" id="username" name="username" value="{{ username }}"/><br/>
+  
+  <label>Password:</label>
+  <div>
+  	<input type="password" name="password" value="" />
+  </div>
+  <div>{{ errormessage }}</div>
+  <input type="submit" value="Login" />
+</form>
+{% endblock %}

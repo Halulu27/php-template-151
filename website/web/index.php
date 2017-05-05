@@ -22,6 +22,11 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 				//->setBody("Here is the message itself")
 				//);
 		break;
+		
+	case "/index":
+		$factory->getIndexController()->showIndex($_SESSION["email"]);
+		break;
+		
 	case "/register/test":
 		echo true;
 		return true;

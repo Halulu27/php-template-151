@@ -20,9 +20,9 @@ class LoginController
   	echo $this->template->render("register.html.twig", ["email" => $email, "username" => $username, "errormessage" => $errormessage]);
   }
   
-  public function showLogin($email = "")
+  public function showLogin($username = "", $errormessage = "")
   {
-  	echo $this->template->render("login.html.twig", ["email" => $email]);
+  	echo $this->template->render("login.html.twig", ["username" => $username, "errormessage" => $errormessage]);
   }
   
   public function checkEmail($email)
@@ -51,12 +51,13 @@ class LoginController
   
   public function register(array $data)
   {
-  	if(!array_key_exists("email", $data) OR !array_key_exists("password", $data) OR !array_key_exists("username", $data))
+  	if (!array_key_exists("email", $data) OR !array_key_exists("password", $data) OR !array_key_exists("username", $data))
   	{
-  		$this->showRegister($data["email"], $data["username"], "Bitte alles ausfüllen");
+  		$this->showRegister();
   		return;
   	}
   	
+  	// Kompakter machen  	
   	if ($this->loginService->usernameExists($data["username"]))
   	{
   		$this->showRegister($data["email"], $data["username"], "Username existiert bereits.");
@@ -65,21 +66,13 @@ class LoginController
   	
   	if ($this->loginService->emailExists($data["email"]))
   	{
-  		$this->showRegister($data["email"], $data["username"], "email existiert bereits");
+  		$this->showRegister($data["email"], $data["username"], "Email existiert bereits");
   		return;
   	}
   	
   	if ($this->loginService->registration($data["username"], $data["email"], $data["password"]))
   	{
-  		if ($this->login($data))
-  		{
-  			return true;
-  		}
-  		else 
-  		{
-  			return false;
-  		}
-  			header("Location: /");
+  		header("Location: /");
   	}
   	else {
   		echo $this->template->render("register.html.twig", ["email" => $data["email"], "username" => $data["username"]]);
@@ -89,20 +82,35 @@ class LoginController
   
   public function login(array $data)
   {
-  	if(!array_key_exists("email", $data) OR !array_key_exists("password", $data))
+  	if (!array_key_exists("username", $data) OR !array_key_exists("password", $data))
   	{
-  		$this->showLogin($data["email"]);
+  		$this->showLogin();
   		return;
   	}
   	
-  	if($this->loginService->authenticate($data["email"], $data["password"]))
+	// Check if form is filled out.
+  	$errormessage = "";
+  	if (!isset($data["username"]) || trim($data["username"]) == '')
+  	{
+  		$errormessage = "Please enter your username or email";
+  	}
+  	if (!isset($data["password"]) || trim($data["password"]) == '')
+  	{
+  		$errormessage .= "<br>Please enter your password";
+  	}
+  	if ($errormessage != "")
+  	{
+	  	$this->showLogin($data["username"], $errormessage);
+	  	return;  		
+  	}
+  	
+  	if ($this->loginService->authenticate($data["username"], $data["password"]))
   	{
   		header("Location: /");
   	}  	
   	else 
   	{
-  		echo $this->template->render("login.html.twig", ["email" => $data["email"]]);
-  		echo "Login failed";
+  		$this->showLogin($data["username"], "Login failed");
   	}
   }
 }
