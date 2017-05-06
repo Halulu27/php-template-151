@@ -15,9 +15,9 @@ class LoginController
      $this->loginService = $loginService;
   }
   
-  public function showRegister($email = "", $username = "", $errormessage = "")
+  public function showRegister($email = "", $username = "", $errormessage = "", $confirmation = false)
   {
-  	echo $this->template->render("register.html.twig", ["email" => $email, "username" => $username, "errormessage" => $errormessage]);
+  	echo $this->template->render("register.html.twig", ["email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
@@ -29,11 +29,11 @@ class LoginController
   {
   	if ($this->loginService->emailExists($email))
   	{
-  		echo 1;
+  		echo true;
   	}
   	else
   	{
-  		echo 0;
+  		echo false;
   	}
   }
   
@@ -41,11 +41,23 @@ class LoginController
   {
   	if ($this->loginService->usernameExists($username))
   	{
-  		echo 1;
+  		echo true;
   	}
   	else
   	{
-  		echo 0;
+  		echo false;
+  	}
+  }
+  
+  public function activateAccount($activationString1, $activationString2)
+  {
+  	if ($this->loginService->activationStringsCorrect($activationString1, $activationString2))
+  	{
+  		return true;
+  	}
+  	else
+  	{
+  		return false;
   	}
   }
   
@@ -57,10 +69,35 @@ class LoginController
   		return;
   	}
   	
+	// Check if form is filled out.
+  	$errormessage = "";
+  	if (!isset($data["email"]) || trim($data["email"]) == '')
+  	{
+  		$errormessage .= "Please enter your email."; 
+  	}
+  	if (!isset($data["username"]) || trim($data["username"]) == '')
+  	{
+  		$errormessage .= "\nPlease enter your username";
+  	}
+  	if (!isset($data["password"]) || trim($data["password"]) == '')
+  	{
+  		$errormessage .= "<br>Please enter your password";
+  	}
+  	if ($errormessage != "")
+  	{
+	  	$this->showRegister($data["email"], $data["username"], $errormessage);
+	  	return;  		
+  	}
+  	
   	// Kompakter machen  	
   	if ($this->loginService->usernameExists($data["username"]))
   	{
   		$this->showRegister($data["email"], $data["username"], "Username existiert bereits.");
+  		return;
+  	}
+  	elseif (preg_match('/[^A-Za-z0-9._]/', $data["username"]))
+  	{
+  		$this->showRegister($data["email"], $data["username"], "\r\nUsername can only contain numbers, digits, . and _");
   		return;
   	}
   	
@@ -69,12 +106,18 @@ class LoginController
   		$this->showRegister($data["email"], $data["username"], "Email existiert bereits");
   		return;
   	}
-  	
-  	if ($this->loginService->registration($data["username"], $data["email"], $data["password"]))
+  	elseif (filter_var($data["email"], FILTER_VALIDATE_EMAIL) === false)
   	{
-  		header("Location: /");
+  		$this->showRegister($data["email"], $data["username"], "\r\nEmail is invalid");
+  		return;
   	}
-  	else {
+  	
+  	if (($link = $this->loginService->registration($data["username"], $data["email"], $data["password"])) != false)
+  	{
+  		return $link;
+  	}
+  	else
+  	{
   		echo $this->template->render("register.html.twig", ["email" => $data["email"], "username" => $data["username"]]);
   		echo "Registration failed";
   	}

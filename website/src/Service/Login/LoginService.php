@@ -11,4 +11,6 @@ interface LoginService
 	public function emailExists($email);
 	
 	public function usernameExists($username);
+	
+	public function activationStringsCorrect($activationString1, $activationString2);
 }
