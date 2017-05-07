@@ -14,14 +14,14 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		$factory->getIndexController()->homepage();
 		break;
 		
-	case "/email":
-		$factory->getMailer()->send(
-				Swift_Message::newInstance("Subject")
-				->setFrom(["gibz.module.151@gmail.com" => "Your Name"])
-				->setTo(["simon.odermatt@hotmail.ch" => "Foos Name"])
-				->setBody("Here is the message itself")
-				);
-		break;
+	//case "/email":
+		//$factory->getMailer()->send(
+			//	Swift_Message::newInstance("Subject")
+				//->setFrom(["gibz.module.151@gmail.com" => "Your Name"])
+				//->setTo(["simon.odermatt@hotmail.ch" => "Foos Name"])
+				//->setBody("Here is the message itself")
+				//);
+ 		//break;
 		
 	case "/index":
 		$factory->getIndexController()->showIndex($_SESSION["email"]);
@@ -80,6 +80,32 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		case "/register/checkusername":
 			return $factory->getLoginController()->checkUsername($_REQUEST["username"]);
 			break;
+			
+		case "/password":
+			$cnt = $factory->getLoginController();
+			if ($_SERVER["REQUEST_METHOD"] === "GET")
+			{
+				$cnt->showPassword();
+			}
+			else
+			{
+				$link = $cnt->password($_POST);
+				if (isset($link) AND !empty($link))
+				{
+					// send email and redirect to page where is said that the user have to check his email to reset his password.
+					$factory->getMailer()->send(
+							Swift_Message::newInstance("Instafornotrich - Reset your password")
+							->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
+							->setTo($link[0])
+							->setContentType("text/html")
+							->setBody('<h1>Hi</h1><div><p>Please use the following link to reset your account.
+						If you have reset your password you can ignore this email.</p>
+						<a href="' . $link[1] . '">' . $link[1] .'</a></div>')
+							);
+					$cnt->showPassword(true);
+				}
+			}
+			break;
 		
 	default:
 		$matches = [];		
@@ -100,6 +126,29 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			break;
 		}
 		
+		// Reset password
+		if (preg_match("|^/reset/password/(.+)/(.+)$|", $_SERVER["REQUEST_URI"], $matches))
+		{
+			$cnt = $factory->getLoginController();
+			if (($email = $cnt->checkResetString($matches[1], $matches[2])) != false)
+			{
+				if ($_SERVER["REQUEST_METHOD"] === "GET")
+				{
+					$cnt->showResetPassword($matches[1], $matches[2]);
+				}
+				else 
+				{
+					if ($cnt->resetPassword($email, $_POST, $matches[1], $matches[2]) == true)
+					{
+						$cnt->showLogin();
+					}
+					else
+					{
+						$cnt->homepage();
+					}
+				}
+			}
+		}
 		echo "Not Found";
 }
 

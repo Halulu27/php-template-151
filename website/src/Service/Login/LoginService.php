@@ -13,4 +13,10 @@ interface LoginService
 	public function usernameExists($username);
 	
 	public function activationStringsCorrect($activationString1, $activationString2);
+	
+	public function resetStringCorrect($resetString1, $resetString2);
+	
+	public function resetPassword($username);
+	
+	public function renewPassword($email, $password);
 }

@@ -25,6 +25,16 @@ class LoginController
   	echo $this->template->render("login.html.twig", ["username" => $username, "errormessage" => $errormessage]);
   }
   
+  public function showPassword($reset = false)
+  {
+  	echo $this->template->render("password.html.twig", ["reset" => $reset]);
+  }
+  
+  public function showResetPassword($resetString1, $resetString2)
+  {
+  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2]);
+  }
+  
   public function checkEmail($email)
   {
   	if ($this->loginService->emailExists($email))
@@ -58,6 +68,52 @@ class LoginController
   	else
   	{
   		return false;
+  	}
+  }
+
+  public function checkResetString($resetString1, $resetString2)
+  {
+  	 if (($email = $this->loginService->resetStringCorrect($resetString1, $resetString2)) != false)
+  	 {
+  	 	return $email;
+  	 }
+  	 else
+  	 {
+  	 	return false;
+  	 }
+  }
+  
+  public function resetPassword($email, array $data, $resetString1, $resetString2)
+  {
+  	if (!array_key_exists("password", $data) OR !array_key_exists("confirmpassword", $data))
+  	{
+  		$this->showResetPassword($resetString1, $resetString2);
+  		return;
+  	}
+  	
+  	if (!isset($data["password"]) || trim($data["password"]) == '')
+  	{
+  		$this->showResetPassword($resetString1, $resetString2);
+  		return;
+  	}
+  	elseif (!isset($data["confirmpassword"]) || trim($data["confirmpassword"]) == '')
+  	{
+  		$this->showResetPassword($resetString1, $resetString2);
+  		return;
+  	}
+  	elseif ($data["password"] != $data["confirmpassword"])
+  	{
+  		$this->showResetPassword($resetString1, $resetString2);
+  		return;
+  	}
+  	
+  	if ($this->loginService->renewPassword($email, $data["password"]) == true)
+  	{
+  		return true;
+  	}
+  	else
+  	{
+  		$this->showResetPassword($resetString1, $resetString2);
   	}
   }
   
@@ -156,7 +212,29 @@ class LoginController
   		$this->showLogin($data["username"], "Login failed");
   	}
   }
+  
+  public function password(array $data)
+  {
+  	if (!array_key_exists("username", $data))
+  	{
+  		$this->showPassword();
+  		return;
+  	}
+  	// Check if form is filled out.
+  	if (!isset($data["username"]) || trim($data["username"]) == '')
+  	{
+  		$this->showPassword();
+  		return;
+  	}
+  	
+  	if (($link = $this->loginService->resetPassword($data["username"])) != false)
+  	{
+  		return $link;
+  	}
+  	$this->showPassword();
+  }
 }
+
 
 
 
