@@ -17,7 +17,8 @@ class LoginController
   
   public function showRegister($email = "", $username = "", $errormessage = "", $confirmation = false)
   {
-  	echo $this->template->render("register.html.twig", ["email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
+  	$csrf = $this->generateCsrf();
+  	echo $this->template->render("register.html.twig", ["csrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
@@ -30,9 +31,16 @@ class LoginController
   	echo $this->template->render("password.html.twig", ["reset" => $reset]);
   }
   
-  public function showResetPassword($resetString1, $resetString2)
+  public function showResetPassword($resetString1, $resetString2, $errormessage = "")
   {
-  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2]);
+  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
+  }
+  
+  public function generateCsrf()
+  {
+  	$csrf = $this->loginService->generateString(50);
+  	$_SESSION["csrf"] = $csrf;
+  	return $csrf;
   }
   
   public function checkEmail($email)
@@ -93,17 +101,17 @@ class LoginController
   	
   	if (!isset($data["password"]) || trim($data["password"]) == '')
   	{
-  		$this->showResetPassword($resetString1, $resetString2);
+  		$this->showResetPassword($resetString1, $resetString2, "password is invalid");
   		return;
   	}
   	elseif (!isset($data["confirmpassword"]) || trim($data["confirmpassword"]) == '')
   	{
-  		$this->showResetPassword($resetString1, $resetString2);
+  		$this->showResetPassword($resetString1, $resetString2, "password is invalid");
   		return;
   	}
   	elseif ($data["password"] != $data["confirmpassword"])
   	{
-  		$this->showResetPassword($resetString1, $resetString2);
+  		$this->showResetPassword($resetString1, $resetString2, "password is invalid");
   		return;
   	}
   	
@@ -113,7 +121,8 @@ class LoginController
   	}
   	else
   	{
-  		$this->showResetPassword($resetString1, $resetString2);
+  		$this->showResetPassword($resetString1, $resetString2, "");
+  		return false;
   	}
   }
   
@@ -126,18 +135,30 @@ class LoginController
   	}
   	
 	// Check if form is filled out.
-  	$errormessage = "";
+  	$errormessage = array();
   	if (!isset($data["email"]) || trim($data["email"]) == '')
   	{
-  		$errormessage .= "Please enter your email."; 
+  		$errormessage["email"] = "Please enter your email."; 
   	}
   	if (!isset($data["username"]) || trim($data["username"]) == '')
   	{
-  		$errormessage .= "\nPlease enter your username";
+  		$errormessage["username"] = "\nPlease enter your username";
   	}
   	if (!isset($data["password"]) || trim($data["password"]) == '')
   	{
-  		$errormessage .= "<br>Please enter your password";
+  		$errormessage["password"] = "Please enter your password";
+  	}
+  	elseif (strlen($data["password"]) < 8)
+  	{
+  		$errormessage["password"] = "Enter minimum 8 characters.";
+  	}
+  	elseif (!preg_match('/\d/', $data["password"]))
+  	{
+  		$errormessage["password"] = "Enter minimum 1 number.";
+  	}
+  	elseif (!preg_match('/[a-z]/', $data["password"]))
+  	{
+  		$errormessage["password"] = "Enter minimum 1 lower letter a-z.";
   	}
   	if ($errormessage != "")
   	{
@@ -170,7 +191,10 @@ class LoginController
   	
   	if (($link = $this->loginService->registration($data["username"], $data["email"], $data["password"])) != false)
   	{
-  		return $link;
+  		$message = "<h1>Hi " . $data["username"] . '</h1><div><p>Please use the following link to activate your account.
+			If you have not created a new account you can ignore this email.</p>
+					<a href="' . $link . '">' . $link .'</a></div>';
+  		return $message;
   	}
   	else
   	{

@@ -11,11 +11,13 @@ class IndexController
      $this->template = $template;
   }
 
-  public function homepage() {
+  public function homepage() 
+  {
     echo "INDEX";
   }
 
-  public function greet($name) {
+  public function greet($name) 
+  {
   	echo $this->template->render("hello.html.twig", ["name" => $name]);
   }
   

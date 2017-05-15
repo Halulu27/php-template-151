@@ -48,7 +48,7 @@ class Factory
 	public function getPdo()
 	{
 		return new \PDO(
-				"mysql:host=mariadb;dbname=instafornotrich;charset=utf8",
+				"mysql:host=mariadb;dbname=socialize;charset=utf8",
 				$this->config["database"]["user"],
 				"my-secret-pw",
 				[\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]

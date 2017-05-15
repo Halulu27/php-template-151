@@ -62,7 +62,7 @@ class LoginPdoService implements LoginService
 		}
 	}
 	
-	private function generateActivationString($length = 25)
+	public function generateString($length = 25)
 	{
 		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$charactersLength = strlen($characters);
@@ -123,8 +123,8 @@ class LoginPdoService implements LoginService
 	
 	public function resetPassword($username)
 	{
-		$resetString1 = $this->generateActivationString();
-		$resetString2 = $this->generateActivationString();
+		$resetString1 = $this->generateString();
+		$resetString2 = $this->generateString();
 		$stmt = $this->pdo->prepare("UPDATE user SET resetString1=?, resetString2=? WHERE username=? OR email=?;");
 		$stmt->bindValue(1, $resetString1);
 		$stmt->bindValue(2, $resetString2);
@@ -152,10 +152,12 @@ class LoginPdoService implements LoginService
 	
 	public function renewPassword($email, $password)
 	{
-		$stmt = $this->pdo->prepare("UPDATE user SET resetString1=null, resetString2=null, password=? WHERE email=?;");
+		$stmt = $this->pdo->prepare("UPDATE user SET resetString1=null, resetString2=null, password=? WHERE email=? OR username=?;");
 		$stmt->bindValue(1, $password);
 		$stmt->bindValue(2, $email);
-		if ($stmt->execute())
+		$stmt->bindValue(3, $email);
+		$result = $stmt->execute();
+		if ($result)
 		{
 			return true;
 		}
@@ -167,8 +169,8 @@ class LoginPdoService implements LoginService
 	
 	public function registration($username, $email, $password)
 	{
-		$activationString1 = $this->generateActivationString();
-		$activationString2 = $this->generateActivationString();
+		$activationString1 = $this->generateString();
+		$activationString2 = $this->generateString();
 		$stmt = $this->pdo->prepare("INSERT INTO user (username, email, password, activationString1, activationString2) VALUES (?, ?, ?, ?, ?);");
 		$stmt->bindValue(1, $username);
 		$stmt->bindValue(2, $email);

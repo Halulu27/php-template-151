@@ -9,13 +9,22 @@
 the email we sent you. Did not get an email? click here</p><a href="#"><</a>
 {% else %}
 <form action="/register" method="post">
-  Email:<br/>
+  <label>Email:<label/>
   <input type="email" id="email" name="email" value="{{ email }}" /><br/>
-  username:<br/>
+  {% if errormessage.email != null %}
+  	<div>{{ errormessage.email }}</div>
+  {% endif %}
+  <label>username:<label/>
   <input type="text" id="username" name="username" value="{{ username }}"/><br/>
-  Password:<br/>
+  {% if errormessage.username != null %}
+  	<div>{{ errormessage.username }}</div>
+  {% endif %}
+  <label>Password:<label/>
   <input type="password" name="password" value="" /><br/><br/>
-  <div>{{ errormessage }}</div>
+  {% if errormessage.password != null %}
+  	<div>{{ errormessage.password }}</div>
+  {% endif %}
+  <input type="hidden" name="csrf" value="{{ csrf }}">
   <input id="submit" type="submit" value="Register" />
 </form>
 

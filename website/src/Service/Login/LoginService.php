@@ -19,4 +19,6 @@ interface LoginService
 	public function resetPassword($username);
 	
 	public function renewPassword($email, $password);
+	
+	public function generateString($length = 25);
 }

@@ -41,27 +41,33 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		
 	case "/register":
 		$cnt = $factory->getLoginController();
+		$confirmationView = false;
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{
-			$link = $cnt->register($_POST);
-			if (isset($link) AND !empty($link))
+			if (array_key_exists("csrf", $_POST) && isset($_POST["csrf"]) && !trim($_POST["csrf"]) == '' && $_SESSION["csrf"] == $_POST["csrf"])
 			{
-				// send email and redirect to page where is said that the user have to activate his account with his email.
-				$factory->getMailer()->send(
-					Swift_Message::newInstance("Instafornotrich - Activate your account")
-					->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
-					->setTo($_POST["email"])
-					->setContentType("text/html")
-					->setBody("<h1>Hi " . $_POST["username"] . '</h1><div><p>Please use the following link to activate your account.
-						If you have not created a new account you can ignore this email.</p>
-						<a href="' . $link . '">' . $link .'</a></div>')
-				);
-				$cnt->showRegister("","", "", true);
+				$message = $cnt->register($_POST);
+				if (isset($message) AND !empty($message))
+				{
+					// send email and redirect to page where is said that the user have to activate his account with his email.
+					$factory->getMailer()->send(
+							Swift_Message::newInstance("Socialize - Activate your account")
+							->setFrom(["gibz.module.151@gmail.com" => "Socialize"])
+							->setTo($_POST["email"])
+							->setContentType("text/html")
+							->setBody($message)
+							);
+					$cnt->showRegister("", "", "", true);
+				}
+			}
+			else
+			{
+				$cnt->showRegister();
 			}
 		}
 		else
 		{
-			$cnt->showRegister();
+			$cnt->showRegister();			
 		}
 		break;
 		
@@ -144,9 +150,10 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 					}
 					else
 					{
-						$cnt->homepage();
+						$cnt->showLogin("", "fatal error; was not able to reset password");
 					}
 				}
+				break;
 			}
 		}
 		echo "Not Found";
