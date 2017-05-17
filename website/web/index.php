@@ -29,22 +29,28 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		
 	case "/login":
 		$cnt = $factory->getLoginController();
-		if ($_SERVER["REQUEST_METHOD"] === "GET")
+		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{
-			$cnt->showLogin();
+			if (array_key_exists("logincsrf", $_POST) && isset($_POST["logincsrf"]) && !trim($_POST["logincsrf"]) == '' && $_SESSION["logincsrf"] == $_POST["logincsrf"])
+			{			
+				$cnt->login($_POST);
+			}
+			else 
+			{
+				$cnt->showLogin();
+			}
 		}
 		else 
 		{
-			$cnt->login($_POST);
+			$cnt->showLogin();
 		}
 		break;
 		
 	case "/register":
 		$cnt = $factory->getLoginController();
-		$confirmationView = false;
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{
-			if (array_key_exists("csrf", $_POST) && isset($_POST["csrf"]) && !trim($_POST["csrf"]) == '' && $_SESSION["csrf"] == $_POST["csrf"])
+			if (array_key_exists("registercsrf", $_POST) && isset($_POST["registercsrf"]) && !trim($_POST["registercsrf"]) == '' && $_SESSION["registercsrf"] == $_POST["registercsrf"])
 			{
 				$message = $cnt->register($_POST);
 				if (isset($message) AND !empty($message))
@@ -89,27 +95,32 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			
 		case "/password":
 			$cnt = $factory->getLoginController();
-			if ($_SERVER["REQUEST_METHOD"] === "GET")
+			if ($_SERVER["REQUEST_METHOD"] === "POST")
 			{
-				$cnt->showPassword();
+				if (array_key_exists("passwordcsrf", $_POST) && isset($_POST["passwordcsrf"]) && !trim($_POST["passwordcsrf"]) == '' && $_SESSION["passwordcsrf"] == $_POST["passwordcsrf"])
+				{
+					$message = $cnt->password($_POST);
+					if (isset($message) AND !empty($message))
+					{
+						// send email and redirect to page where is said that the user have to check his email to reset his password.
+						$factory->getMailer()->send(
+								Swift_Message::newInstance("Instafornotrich - Reset your password")
+								->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
+								->setTo($link[0])
+								->setContentType("text/html")
+								->setBody($message)
+								);
+						$cnt->showPassword(true);
+					}
+				}
+				else
+				{
+					$cnt->showPassword();
+				}
 			}
 			else
 			{
-				$link = $cnt->password($_POST);
-				if (isset($link) AND !empty($link))
-				{
-					// send email and redirect to page where is said that the user have to check his email to reset his password.
-					$factory->getMailer()->send(
-							Swift_Message::newInstance("Instafornotrich - Reset your password")
-							->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
-							->setTo($link[0])
-							->setContentType("text/html")
-							->setBody('<h1>Hi</h1><div><p>Please use the following link to reset your account.
-						If you have reset your password you can ignore this email.</p>
-						<a href="' . $link[1] . '">' . $link[1] .'</a></div>')
-							);
-					$cnt->showPassword(true);
-				}
+				$cnt->showPassword();
 			}
 			break;
 		

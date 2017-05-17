@@ -17,18 +17,20 @@ class LoginController
   
   public function showRegister($email = "", $username = "", $errormessage = "", $confirmation = false)
   {
-  	$csrf = $this->generateCsrf();
-  	echo $this->template->render("register.html.twig", ["csrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
+  	$csrf = $this->generateCsrf("register");
+  	echo $this->template->render("register.html.twig", ["registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
   {
-  	echo $this->template->render("login.html.twig", ["username" => $username, "errormessage" => $errormessage]);
+  	$csrf = $this->generateCsrf("login");
+  	echo $this->template->render("login.html.twig", ["logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
   }
   
   public function showPassword($reset = false)
   {
-  	echo $this->template->render("password.html.twig", ["reset" => $reset]);
+  	$csrf = $this->generateCsrf("password");
+  	echo $this->template->render("password.html.twig", ["passwordcsrf" => $csrf, "reset" => $reset]);
   }
   
   public function showResetPassword($resetString1, $resetString2, $errormessage = "")
@@ -36,10 +38,10 @@ class LoginController
   	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
   }
   
-  public function generateCsrf()
+  public function generateCsrf($csrfName)
   {
   	$csrf = $this->loginService->generateString(50);
-  	$_SESSION["csrf"] = $csrf;
+  	$_SESSION[$csrfName . "csrf"] = $csrf;
   	return $csrf;
   }
   
@@ -253,7 +255,9 @@ class LoginController
   	
   	if (($link = $this->loginService->resetPassword($data["username"])) != false)
   	{
-  		return $link;
+  		return '<h1>Hi</h1><div><p>Please use the following link to reset your account.
+							If you have reset your password you can ignore this email.</p>
+							<a href="' . $link[1] . '">' . $link[1] .'</a></div>';
   	}
   	$this->showPassword();
   }
