@@ -24,21 +24,14 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
  		//break;
 		
 	case "/index":
-		$factory->getIndexController()->showIndex($_SESSION["email"]);
+		$factory->getIndexController()->showIndex();
 		break;
 		
 	case "/login":
 		$cnt = $factory->getLoginController();
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
-		{
-			if (array_key_exists("logincsrf", $_POST) && isset($_POST["logincsrf"]) && !trim($_POST["logincsrf"]) == '' && $_SESSION["logincsrf"] == $_POST["logincsrf"])
-			{			
-				$cnt->login($_POST);
-			}
-			else 
-			{
-				$cnt->showLogin();
-			}
+		{	
+			$cnt->login($_POST);
 		}
 		else 
 		{
@@ -46,29 +39,30 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		}
 		break;
 		
+	case "/logout":
+		$cnt = $factory->getLoginController();
+		if ($_SERVER["REQUEST_METHOD"] === "POST")
+		{
+			$cnt->logout($_POST);
+		}
+		break;
+		
 	case "/register":
 		$cnt = $factory->getLoginController();
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{
-			if (array_key_exists("registercsrf", $_POST) && isset($_POST["registercsrf"]) && !trim($_POST["registercsrf"]) == '' && $_SESSION["registercsrf"] == $_POST["registercsrf"])
+			$message = $cnt->register($_POST);
+			if (isset($message) AND !empty($message))
 			{
-				$message = $cnt->register($_POST);
-				if (isset($message) AND !empty($message))
-				{
-					// send email and redirect to page where is said that the user have to activate his account with his email.
-					$factory->getMailer()->send(
-							Swift_Message::newInstance("Socialize - Activate your account")
-							->setFrom(["gibz.module.151@gmail.com" => "Socialize"])
-							->setTo($_POST["email"])
-							->setContentType("text/html")
-							->setBody($message)
-							);
-					$cnt->showRegister("", "", "", true);
-				}
-			}
-			else
-			{
-				$cnt->showRegister();
+				// send email and redirect to page where is said that the user have to activate his account with his email.
+				$factory->getMailer()->send(
+						Swift_Message::newInstance("Socialize - Activate your account")
+						->setFrom(["gibz.module.151@gmail.com" => "Socialize"])
+						->setTo($_POST["email"])
+						->setContentType("text/html")
+						->setBody($message)
+						);
+				$cnt->showRegister("", "", "", true);
 			}
 		}
 		else
@@ -97,25 +91,18 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			$cnt = $factory->getLoginController();
 			if ($_SERVER["REQUEST_METHOD"] === "POST")
 			{
-				if (array_key_exists("passwordcsrf", $_POST) && isset($_POST["passwordcsrf"]) && !trim($_POST["passwordcsrf"]) == '' && $_SESSION["passwordcsrf"] == $_POST["passwordcsrf"])
+				$message = $cnt->password($_POST);
+				if (isset($message) AND !empty($message))
 				{
-					$message = $cnt->password($_POST);
-					if (isset($message) AND !empty($message))
-					{
-						// send email and redirect to page where is said that the user have to check his email to reset his password.
-						$factory->getMailer()->send(
-								Swift_Message::newInstance("Instafornotrich - Reset your password")
-								->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
-								->setTo($link[0])
-								->setContentType("text/html")
-								->setBody($message)
-								);
-						$cnt->showPassword(true);
-					}
-				}
-				else
-				{
-					$cnt->showPassword();
+					// send email and redirect to page where is said that the user have to check his email to reset his password.
+					$factory->getMailer()->send(
+							Swift_Message::newInstance("Instafornotrich - Reset your password")
+							->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
+							->setTo($link[0])
+							->setContentType("text/html")
+							->setBody($message)
+							);
+					$cnt->showPassword(true);
 				}
 			}
 			else

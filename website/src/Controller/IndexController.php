@@ -13,7 +13,7 @@ class IndexController
 
   public function homepage() 
   {
-    echo "INDEX";
+  	echo $this->template->render("index.html.twig", ["session" => $_SESSION["username"]]);
   }
 
   public function greet($name) 
@@ -21,8 +21,8 @@ class IndexController
   	echo $this->template->render("hello.html.twig", ["name" => $name]);
   }
   
-  public function showIndex($session)
+  public function showIndex()
   {
-  	echo $this->template->render("index.html.twig", ["session" => $session]);
+  	echo $this->template->render("index.html.twig", []);
   }
 }

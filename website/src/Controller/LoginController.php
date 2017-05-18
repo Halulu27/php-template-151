@@ -130,6 +130,13 @@ class LoginController
   
   public function register(array $data)
   {
+
+  	if (!array_key_exists("registercsrf", $_POST) && !isset($_POST["registercsrf"]) && trim($_POST["registercsrf"]) == '' && $_SESSION["registercsrf"] != $_POST["registercsrf"])
+  	{
+  		$cnt->showRegister();
+  		return;
+  	}
+  	
   	if (!array_key_exists("email", $data) OR !array_key_exists("password", $data) OR !array_key_exists("username", $data))
   	{
   		$this->showRegister();
@@ -207,6 +214,12 @@ class LoginController
   
   public function login(array $data)
   {
+  	if (!array_key_exists("logincsrf", $_POST) && !isset($_POST["logincsrf"]) && trim($_POST["logincsrf"]) == '' && $_SESSION["logincsrf"] != $_POST["logincsrf"])
+  	{
+  		$cnt->showLogin();
+  		return;
+  	}
+  	
   	if (!array_key_exists("username", $data) OR !array_key_exists("password", $data))
   	{
   		$this->showLogin();
@@ -239,8 +252,19 @@ class LoginController
   	}
   }
   
+  public function logout(array $data)
+  {
+  	// implement csrf security
+  	session_destroy();
+  }
+  
   public function password(array $data)
   {
+	if (!array_key_exists("passwordcsrf", $_POST) && !isset($_POST["passwordcsrf"]) && trim($_POST["passwordcsrf"]) == '' && $_SESSION["passwordcsrf"] != $_POST["passwordcsrf"])
+	{
+		$cnt->showPassword();		
+	}
+	
   	if (!array_key_exists("username", $data))
   	{
   		$this->showPassword();
