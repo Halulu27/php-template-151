@@ -45,6 +45,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		{
 			$cnt->logout($_POST);
 		}
+		header("Location: /");
 		break;
 		
 	case "/register":

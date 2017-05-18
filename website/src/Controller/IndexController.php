@@ -13,7 +13,12 @@ class IndexController
 
   public function homepage() 
   {
-  	echo $this->template->render("index.html.twig", ["session" => $_SESSION["username"]]);
+  	$username = "Not logged in";
+  	if (isset($_SESSION["username"]))
+  	{
+  		$username = $_SESSION["username"];
+  	}
+  	echo $this->template->render("index.html.twig", ["session" => $username]);
   }
 
   public function greet($name) 
@@ -23,6 +28,7 @@ class IndexController
   
   public function showIndex()
   {
-  	echo $this->template->render("index.html.twig", []);
+  	//echo $this->template->render("index.html.twig", []);
+  	$this->homepage();
   }
 }

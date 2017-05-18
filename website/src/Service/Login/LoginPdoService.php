@@ -196,7 +196,7 @@ class LoginPdoService implements LoginService
 			return false;
 		}
 		
-		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE (username=? OR email=?) AND password=?");
+		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE (username=? OR email=?) AND password=?;");
 		$stmt->bindValue(1, $user);
 		$stmt->bindValue(2, $user);
 		$stmt->bindValue(3, $password);
@@ -205,6 +205,8 @@ class LoginPdoService implements LoginService
 		if ($stmt->rowCount() == 1)
 		{
 			$result = $stmt->fetch();
+			session_destroy();
+			session_start();
 			$_SESSION["email"] = $result["email"];
 			$_SESSION["username"] = $result["username"];
 			return true;
