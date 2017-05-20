@@ -13,12 +13,8 @@ class IndexController
 
   public function homepage() 
   {
-  	$username = "Not logged in";
-  	if (isset($_SESSION["username"]))
-  	{
-  		$username = $_SESSION["username"];
-  	}
-  	echo $this->template->render("index.html.twig", ["session" => $username]);
+  	$user = $this->getUser();
+  	echo $this->template->render("index.html.twig", ["user" => $user]);
   }
 
   public function greet($name) 

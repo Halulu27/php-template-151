@@ -18,29 +18,46 @@ class LoginController
   public function showRegister($email = "", $username = "", $errormessage = "", $confirmation = false)
   {
   	$csrf = $this->generateCsrf("register");
-  	echo $this->template->render("register.html.twig", ["registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
+  	$user = $this->getUser();
+  	echo $this->template->render("register.html.twig", ["user" => $user, "registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
   {
+  	session_regenerate_id();
   	$csrf = $this->generateCsrf("login");
-  	echo $this->template->render("login.html.twig", ["logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
+  	$user = $this->getUser();
+  	echo $this->template->render("login.html.twig", ["user" => $user, "logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
   }
   
   public function showPassword($reset = false)
   {
   	$csrf = $this->generateCsrf("password");
-  	echo $this->template->render("password.html.twig", ["passwordcsrf" => $csrf, "reset" => $reset]);
+  	$user = $this->getUser();
+  	echo $this->template->render("password.html.twig", ["user" => $user, "passwordcsrf" => $csrf, "reset" => $reset]);
   }
   
   public function showResetPassword($resetString1, $resetString2, $errormessage = "")
   {
-  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
+  	$user = $this->getUser();
+  	echo $this->template->render("resetpassword.html.twig", ["user" => $user, "resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
+  }
+  
+  private function getUser()
+  {
+  	$user = array();
+  	$user["loggedIn"] = false;
+  	if (isset($_SESSION["username"]))
+  	{
+  		$user["loggedIn"] = true;
+  		$user["username"] = $_SESSION["username"];
+  	}
+  	return $user;
   }
   
   public function generateCsrf($csrfName)
   {
-  	$csrf = $this->loginService->generateString(50);
+  	$csrf = $this->generateString(50);
   	$_SESSION[$csrfName . "csrf"] = $csrf;
   	return $csrf;
   }
@@ -71,7 +88,7 @@ class LoginController
   
   public function activateAccount($activationString1, $activationString2)
   {
-  	if ($this->loginService->activationStringsCorrect($activationString1, $activationString2))
+  	if ($this->loginService->userActivation($activationString1, $activationString2))
   	{
   		return true;
   	}
@@ -117,7 +134,8 @@ class LoginController
   		return;
   	}
   	
-  	if ($this->loginService->renewPassword($email, $data["password"]) == true)
+  	$passwordhash = password_hash($data["password"], PASSWORD_DEFAULT);
+  	if ($this->loginService->renewPassword($email, $passwordhash) == true)
   	{
   		return true;
   	}
@@ -130,7 +148,6 @@ class LoginController
   
   public function register(array $data)
   {
-
   	if (!array_key_exists("registercsrf", $_POST) && !isset($_POST["registercsrf"]) && trim($_POST["registercsrf"]) == '' && $_SESSION["registercsrf"] != $_POST["registercsrf"])
   	{
   		$cnt->showRegister();
@@ -169,47 +186,42 @@ class LoginController
   	{
   		$errormessage["password"] = "Enter minimum 1 lower letter a-z.";
   	}
-  	if ($errormessage != "")
+  	if ($this->loginService->usernameExists($data["username"]))
+  	{
+  		$errormessage["username"] = "Username existiert bereits.";
+  	}
+  	elseif (preg_match('/[^A-Za-z0-9._]/', $data["username"]))
+  	{
+  		$errormessage["username"] = "Username can only contain numbers, digits, . and _";
+  	}
+  	if ($this->loginService->emailExists($data["email"]))
+  	{
+  		$errormessage["email"] = "Email existiert bereits";
+  	}
+  	elseif (filter_var($data["email"], FILTER_VALIDATE_EMAIL) == false)
+  	{
+  		$errormessage["email"] = "Email is invalid";
+  	}
+  	if (isset($errormessage["username"]) OR isset($errormessage["email"]) OR isset($errormessage["password"]))
   	{
 	  	$this->showRegister($data["email"], $data["username"], $errormessage);
 	  	return;  		
   	}
-  	
-  	// Kompakter machen  	
-  	if ($this->loginService->usernameExists($data["username"]))
+
+  	$passwordhash = password_hash($data["password"], PASSWORD_DEFAULT);
+  	$activationString1 = $this->generateLink();
+  	$activationString2 = $this->generateLink();  	
+  	if ($this->loginService->registration($data["username"], $data["email"], $passwordhash, $activationString1, $activationString2) == true)
   	{
-  		$this->showRegister($data["email"], $data["username"], "Username existiert bereits.");
-  		return;
-  	}
-  	elseif (preg_match('/[^A-Za-z0-9._]/', $data["username"]))
-  	{
-  		$this->showRegister($data["email"], $data["username"], "\r\nUsername can only contain numbers, digits, . and _");
-  		return;
-  	}
-  	
-  	if ($this->loginService->emailExists($data["email"]))
-  	{
-  		$this->showRegister($data["email"], $data["username"], "Email existiert bereits");
-  		return;
-  	}
-  	elseif (filter_var($data["email"], FILTER_VALIDATE_EMAIL) === false)
-  	{
-  		$this->showRegister($data["email"], $data["username"], "\r\nEmail is invalid");
-  		return;
-  	}
-  	
-  	if (($link = $this->loginService->registration($data["username"], $data["email"], $data["password"])) != false)
-  	{
+  		$link = "http://localhost/activate/account/" . $activationString1 . "/" . $activationString2;
   		$message = "<h1>Hi " . $data["username"] . '</h1><div><p>Please use the following link to activate your account.
 			If you have not created a new account you can ignore this email.</p>
 					<a href="' . $link . '">' . $link .'</a></div>';
   		return $message;
   	}
-  	else
-  	{
-  		echo $this->template->render("register.html.twig", ["email" => $data["email"], "username" => $data["username"]]);
-  		echo "Registration failed";
-  	}
+  	$errormessage["email"] = "Failed hard";
+  	$this->showRegister($data["email"], $data["username"], $errormessage);
+  	return;
   }
   
   public function login(array $data)
@@ -226,6 +238,13 @@ class LoginController
   		return;
   	}
   	
+  	// Is the user activated?
+  	if (!$this->loginService->userActivated($data["username"]))
+  	{
+  		$this->showLogin();
+  		return;
+  	}
+  	
 	// Check if form is filled out.
   	$errormessage = "";
   	if (!isset($data["username"]) || trim($data["username"]) == '')
@@ -236,20 +255,28 @@ class LoginController
   	{
   		$errormessage .= "<br>Please enter your password";
   	}
+  	if (!$this->loginService->emailExists($data["username"]) AND !$this->loginService->usernameExists($data["username"]))
+  	{
+  		$errormessage .= "Username or password is wrong!";
+  	}
   	if ($errormessage != "")
   	{
 	  	$this->showLogin($data["username"], $errormessage);
 	  	return;  		
-  	}
-  	
-  	if ($this->loginService->authenticate($data["username"], $data["password"]))
-  	{
-  		header("Location: /");
   	}  	
-  	else 
+  	
+  	if (($result = $this->loginService->authenticate($data["username"], $data["password"])) != false)
   	{
-  		$this->showLogin($data["username"], "Login failed");
+  		if (password_verify($data["password"], $result["password"]))
+  		{
+	  		session_regenerate_id();
+			$_SESSION["email"] = $result["email"];
+			$_SESSION["username"] = $result["username"];
+	  		header("Location: /");
+	  		return;
+  		}
   	}
+  	$this->showLogin($data["username"], "Login failed");
   }
   
   public function logout(array $data)
@@ -275,15 +302,44 @@ class LoginController
   	{
   		$this->showPassword();
   		return;
-  	}
-  	
-  	if (($link = $this->loginService->resetPassword($data["username"])) != false)
+  	}  	
+
+  	$resetString1 = $this->generateLink();
+  	$resetString2 = $this->generateLink();
+  	if (($email = $this->loginService->resetPassword($data["username"])) != false)
   	{
-  		return '<h1>Hi</h1><div><p>Please use the following link to reset your account.
+  		$result = array();
+  		$result["email"] = $email;
+  		$link = "http://localhost/reset/password/" . $resetString1 . "/" . $resetString2;
+  		$result["message"] = '<h1>Hi</h1><div><p>Please use the following link to reset your account.
 							If you have reset your password you can ignore this email.</p>
-							<a href="' . $link[1] . '">' . $link[1] .'</a></div>';
+							<a href="' . $link . '">' . $link .'</a></div>';
+  		return $result;
   	}
   	$this->showPassword();
+  }
+
+  public function generateString($length)
+  {
+  	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  	$charactersLength = strlen($characters);
+  	$randomString = '';
+  	for ($i = 0; $i < $length; $i++)
+  	{
+  		$randomString .= $characters[rand(0, $charactersLength - 1)];
+  	}
+  	return $randomString;
+  }
+  
+  public function generateLink($length = 25)
+  {
+  	$randomString = '';
+  	do
+  	{
+  		$randomString = $this->generateString($length);
+  		$result = $this->loginService->linkExists($randomString);
+  	} while ($result == true);
+  	return $randomString;
   }
 }
 

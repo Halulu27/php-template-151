@@ -9,8 +9,10 @@
 the email we sent you. Did not get an email? click here</p><a href="#"><</a>
 {% else %}
 <form action="/register" method="post">
-  <label>Email:<label/>
-  <input type="email" id="email" name="email" value="{{ email }}" /><br/>
+  <div>
+  	<label>Email:<label/>
+  	<input type="email" id="email" name="email" value="{{ email }}" />
+  </div>
   {% if errormessage.email != null %}
   	<div>{{ errormessage.email }}</div>
   {% endif %}

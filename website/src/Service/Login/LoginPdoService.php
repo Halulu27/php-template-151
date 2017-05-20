@@ -27,7 +27,7 @@ class LoginPdoService implements LoginService
 		}
 	}
 	
-	// Checks if Email already exists in the database. Used with the AJAX
+	// Checks if Email already exists in the database.
 	public function emailExists($email)
 	{
 		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE email=?");
@@ -46,7 +46,7 @@ class LoginPdoService implements LoginService
 	
 	// Checks if user is activated. Otherwise he is not able to login till he 
 	// used the activation email.
-	private function userActivated($user)
+	public function userActivated($user)
 	{
 		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE email=? OR username=? AND active=1");
 		$stmt->bindValue(1, $user);
@@ -62,29 +62,25 @@ class LoginPdoService implements LoginService
 		}
 	}
 	
-	public function generateString($length = 25)
+	public function linkExists($randomString)
 	{
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$charactersLength = strlen($characters);
-		$randomString = '';
 		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE activationString1=? OR activationString2=? OR resetString1=? OR resetString2=? ;");
-		do 
+		$stmt->bindValue(1, $randomString);
+		$stmt->bindValue(2, $randomString);
+		$stmt->bindValue(3, $randomString);
+		$stmt->bindValue(4, $randomString);
+		$stmt->execute();
+		if ($stmt->rowCount() != 0)
 		{
-			$randomString = '';
-			for ($i = 0; $i < $length; $i++) 
-			{
-				$randomString .= $characters[rand(0, $charactersLength - 1)];
-			}
-			$stmt->bindValue(1, $randomString);
-			$stmt->bindValue(2, $randomString);
-			$stmt->bindValue(3, $randomString);
-			$stmt->bindValue(4, $randomString);
-			$stmt->execute();
-		} while ($stmt->rowCount() != 0);
-		return $randomString;
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
 	}
 		
-	public function activationStringsCorrect($activationString1, $activationString2)
+	public function userActivation($activationString1, $activationString2)
 	{
 		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE active=0 AND activationString1=? AND activationString2=?;");
 		$stmt->bindValue(1, $activationString1);
@@ -121,10 +117,8 @@ class LoginPdoService implements LoginService
 		return false;
 	}
 	
-	public function resetPassword($username)
+	public function resetPassword($username, $resetString1, $resetString2)
 	{
-		$resetString1 = $this->generateString();
-		$resetString2 = $this->generateString();
 		$stmt = $this->pdo->prepare("UPDATE user SET resetString1=?, resetString2=? WHERE username=? OR email=?;");
 		$stmt->bindValue(1, $resetString1);
 		$stmt->bindValue(2, $resetString2);
@@ -138,16 +132,10 @@ class LoginPdoService implements LoginService
 			if ($stmt->execute() AND $stmt->rowCount() == 1)
 			{
 				$result = $stmt->fetch();
-				$link = array();
-				$link[0] = $result["email"];
-				$link[1] = "http://localhost/reset/password/" . $resetString1 . "/" . $resetString2;
-				return $link;
+				return $result["email"];
 			}
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public function renewPassword($email, $password)
@@ -167,10 +155,8 @@ class LoginPdoService implements LoginService
 		}
 	}
 	
-	public function registration($username, $email, $password)
+	public function registration($username, $email, $password, $activationString1, $activationString2)
 	{
-		$activationString1 = $this->generateString();
-		$activationString2 = $this->generateString();
 		$stmt = $this->pdo->prepare("INSERT INTO user (username, email, password, activationString1, activationString2) VALUES (?, ?, ?, ?, ?);");
 		$stmt->bindValue(1, $username);
 		$stmt->bindValue(2, $email);
@@ -179,8 +165,7 @@ class LoginPdoService implements LoginService
 		$stmt->bindValue(5, $activationString2);
 		if ($stmt->execute())
 		{
-			$link = "http://localhost/activate/account/" . $activationString1 . "/" . $activationString2;
-			return $link;
+			return true;
 		}
 		else
 		{
@@ -189,27 +174,16 @@ class LoginPdoService implements LoginService
 	}
 	
 	public function authenticate($user, $password)
-	{
-		// Checks if users exists and is activated.
-		if (!$this->emailExists($user) AND !$this->usernameExists($user))
-		{
-			return false;
-		}
-		
-		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE (username=? OR email=?) AND password=?;");
+	{		
+		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE username=? OR email=?;");
 		$stmt->bindValue(1, $user);
 		$stmt->bindValue(2, $user);
-		$stmt->bindValue(3, $password);
 		$stmt->execute();
 		
 		if ($stmt->rowCount() == 1)
 		{
 			$result = $stmt->fetch();
-			session_destroy();
-			session_start();
-			$_SESSION["email"] = $result["email"];
-			$_SESSION["username"] = $result["username"];
-			return true;
+			return $result;
 		}
 		else 
 		{
@@ -217,6 +191,19 @@ class LoginPdoService implements LoginService
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

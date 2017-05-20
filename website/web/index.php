@@ -92,16 +92,16 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			$cnt = $factory->getLoginController();
 			if ($_SERVER["REQUEST_METHOD"] === "POST")
 			{
-				$message = $cnt->password($_POST);
+				$result = $cnt->password($_POST);
 				if (isset($message) AND !empty($message))
 				{
 					// send email and redirect to page where is said that the user have to check his email to reset his password.
 					$factory->getMailer()->send(
 							Swift_Message::newInstance("Instafornotrich - Reset your password")
 							->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
-							->setTo($link[0])
+							->setTo($result["email"])
 							->setContentType("text/html")
-							->setBody($message)
+							->setBody($result["message"])
 							);
 					$cnt->showPassword(true);
 				}
@@ -111,9 +111,9 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 				$cnt->showPassword();
 			}
 			break;
-		
+			
 	default:
-		$matches = [];		
+		$matches = [];
 		if (preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
 			$factory->getIndexController()->greet($matches[1]);
 			break;
@@ -125,9 +125,12 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			$cnt = $factory->getLoginController();
 			if ($cnt->activateAccount($matches[1], $matches[2]))
 			{
-				$cnt->showLogin();				
+				$cnt->showLogin();
 			}
-			$factory->getIndexController()->homepage();
+			else 
+			{
+				$factory->getIndexController()->homepage();
+			}
 			break;
 		}
 		
