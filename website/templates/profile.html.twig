@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{ parent() }} - {{ SESSION.username }}
+{% endblock %}
+
+{% block content %}
+<div>PostNummber{{ account.PostNumber }}</div>
+<div>FollowerNummer{{ account.FollowerNumber }}</div>
+<div>SubscriberNumber{{ account.SubscriberNumber }}</div>
+{% endblock %}

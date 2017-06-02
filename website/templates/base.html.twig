@@ -9,9 +9,12 @@
 	<title>{% block title 'Socialize' %}</title>
 </head>
 <body>
-    {% if user.loggedIn == true %}
+    {% if SESSION.username != "" %}
     	<div>
-    		<p>You are logged in as {{ user.username }}</p>
+    		<a href="/profile">Profile</a>
+    	</div>
+    	<div>
+    		<p>You are logged in as {{ SESSION.username }}</p>
     	</div>
     	<div>
         	<form action="/logout" method="post">
@@ -22,6 +25,9 @@
     {% else %}
     	<div>
     		<a href="/login">Login</a>
+    	</div>
+    	<div>
+    		<a href="/register">Register</a>
     	</div>
     {% endif %}
     

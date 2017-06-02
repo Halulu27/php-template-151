@@ -3,56 +3,43 @@
 namespace halulu27\Controller;
 
 use halulu27\Service\Login\LoginService;
+use Swift_Message;
 
 class LoginController 
 {
   private $template;
   private $loginService;
+  private $mailer;
 
-  public function __construct(\Twig_Environment $template, LoginService $loginService)
+  public function __construct(\Twig_Environment $template, LoginService $loginService, $mailer)
   {
-     $this->template = $template;
-     $this->loginService = $loginService;
+    $this->template = $template;
+    $this->loginService = $loginService;
+  	$this->mailer = $mailer;
   }
   
   public function showRegister($email = "", $username = "", $errormessage = "", $confirmation = false)
   {
   	$csrf = $this->generateCsrf("register");
-  	$user = $this->getUser();
-  	echo $this->template->render("register.html.twig", ["user" => $user, "registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
+  	echo $this->template->render("register.html.twig", ["registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
   {
   	session_regenerate_id();
   	$csrf = $this->generateCsrf("login");
-  	$user = $this->getUser();
-  	echo $this->template->render("login.html.twig", ["user" => $user, "logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
+  	echo $this->template->render("login.html.twig", ["logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
   }
   
   public function showPassword($reset = false)
   {
   	$csrf = $this->generateCsrf("password");
-  	$user = $this->getUser();
-  	echo $this->template->render("password.html.twig", ["user" => $user, "passwordcsrf" => $csrf, "reset" => $reset]);
+  	echo $this->template->render("password.html.twig", ["passwordcsrf" => $csrf, "reset" => $reset]);
   }
   
   public function showResetPassword($resetString1, $resetString2, $errormessage = "")
   {
-  	$user = $this->getUser();
-  	echo $this->template->render("resetpassword.html.twig", ["user" => $user, "resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
-  }
-  
-  private function getUser()
-  {
-  	$user = array();
-  	$user["loggedIn"] = false;
-  	if (isset($_SESSION["username"]))
-  	{
-  		$user["loggedIn"] = true;
-  		$user["username"] = $_SESSION["username"];
-  	}
-  	return $user;
+  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
   }
   
   public function generateCsrf($csrfName)
@@ -217,6 +204,7 @@ class LoginController
   		$message = "<h1>Hi " . $data["username"] . '</h1><div><p>Please use the following link to activate your account.
 			If you have not created a new account you can ignore this email.</p>
 					<a href="' . $link . '">' . $link .'</a></div>';
+  		$this->sendEmail("Activate your account", $data["email"], $message);
   		return $message;
   	}
   	$errormessage["email"] = "Failed hard";
@@ -272,6 +260,7 @@ class LoginController
 	  		session_regenerate_id();
 			$_SESSION["email"] = $result["email"];
 			$_SESSION["username"] = $result["username"];
+			$_SESSION["isLoggedIn"] = true;
 	  		header("Location: /");
 	  		return;
   		}
@@ -289,34 +278,30 @@ class LoginController
   {
 	if (!array_key_exists("passwordcsrf", $_POST) && !isset($_POST["passwordcsrf"]) && trim($_POST["passwordcsrf"]) == '' && $_SESSION["passwordcsrf"] != $_POST["passwordcsrf"])
 	{
-		$cnt->showPassword();		
-	}
-	
-  	if (!array_key_exists("username", $data))
+		return false;
+	}	
+  	else if (!array_key_exists("username", $data))
   	{
-  		$this->showPassword();
-  		return;
+  		return false;
   	}
   	// Check if form is filled out.
-  	if (!isset($data["username"]) || trim($data["username"]) == '')
+  	else if (!isset($data["username"]) || trim($data["username"]) == '')
   	{
-  		$this->showPassword();
-  		return;
+  		return false;
   	}  	
 
   	$resetString1 = $this->generateLink();
   	$resetString2 = $this->generateLink();
-  	if (($email = $this->loginService->resetPassword($data["username"])) != false)
+  	if (($email = $this->loginService->resetPassword($data["username"], $resetString1, $resetString2)) != false)
   	{
-  		$result = array();
-  		$result["email"] = $email;
   		$link = "http://localhost/reset/password/" . $resetString1 . "/" . $resetString2;
-  		$result["message"] = '<h1>Hi</h1><div><p>Please use the following link to reset your account.
+  		$message = '<h1>Hi</h1><div><p>Please use the following link to reset your account.
 							If you have reset your password you can ignore this email.</p>
 							<a href="' . $link . '">' . $link .'</a></div>';
-  		return $result;
+  		$this->sendEmail("Reset password", $email, $message);
+  		return true;
   	}
-  	$this->showPassword();
+  	return false;
   }
 
   public function generateString($length)
@@ -340,6 +325,17 @@ class LoginController
   		$result = $this->loginService->linkExists($randomString);
   	} while ($result == true);
   	return $randomString;
+  }
+  
+  private function sendEmail($subject, $email, $message)
+  {
+  	$this->mailer->send(
+  			Swift_Message::newInstance("Socialize - " . $subject)
+  			->setFrom(["socializeag@gmail.com" => "Socialize"])
+  			->setTo($email)
+  			->setContentType("text/html")
+  			->setBody($message)
+  			);
   }
 }
 

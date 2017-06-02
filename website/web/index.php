@@ -14,20 +14,19 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		$factory->getIndexController()->homepage();
 		break;
 		
-	//case "/email":
-		//$factory->getMailer()->send(
-			//	Swift_Message::newInstance("Subject")
-				//->setFrom(["gibz.module.151@gmail.com" => "Your Name"])
-				//->setTo(["simon.odermatt@hotmail.ch" => "Foos Name"])
-				//->setBody("Here is the message itself")
-				//);
- 		//break;
-		
 	case "/index":
 		$factory->getIndexController()->showIndex();
 		break;
 		
 	case "/login":
+		if (isset($_SESSION["isLoggedIn"]))
+		{
+			if ($_SESSION["isLoggedIn"] == true)
+			{
+				header("Location: /index");
+				break;
+			}
+		}
 		$cnt = $factory->getLoginController();
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{	
@@ -49,20 +48,20 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		break;
 		
 	case "/register":
+		if (isset($_SESSION["isLoggedIn"]))
+		{
+			if ($_SESSION["isLoggedIn"] == true)
+			{
+				header("Location: /index");
+				break;
+			}
+		}
 		$cnt = $factory->getLoginController();
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{
-			$message = $cnt->register($_POST);
-			if (isset($message) AND !empty($message))
+			$result = $cnt->register($_POST);
+			if ($result == true)
 			{
-				// send email and redirect to page where is said that the user have to activate his account with his email.
-				$factory->getMailer()->send(
-						Swift_Message::newInstance("Socialize - Activate your account")
-						->setFrom(["gibz.module.151@gmail.com" => "Socialize"])
-						->setTo($_POST["email"])
-						->setContentType("text/html")
-						->setBody($message)
-						);
 				$cnt->showRegister("", "", "", true);
 			}
 		}
@@ -92,23 +91,24 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			$cnt = $factory->getLoginController();
 			if ($_SERVER["REQUEST_METHOD"] === "POST")
 			{
-				$result = $cnt->password($_POST);
-				if (isset($message) AND !empty($message))
-				{
-					// send email and redirect to page where is said that the user have to check his email to reset his password.
-					$factory->getMailer()->send(
-							Swift_Message::newInstance("Instafornotrich - Reset your password")
-							->setFrom(["gibz.module.151@gmail.com" => "Instafornotrich"])
-							->setTo($result["email"])
-							->setContentType("text/html")
-							->setBody($result["message"])
-							);
-					$cnt->showPassword(true);
-				}
+				$worked = $cnt->password($_POST);
+				$cnt->showPassword($worked);
 			}
 			else
 			{
 				$cnt->showPassword();
+			}
+			break;
+			
+		case "/profile":
+
+			if (isset($_SESSION["isLoggedIn"]))
+			{
+				if ($_SESSION["isLoggedIn"] == true && isset($_SESSION["username"]))
+				{
+					$cnt = $factory->getProfileController();
+					$cnt->showProfile($_SESSION["username"]);				
+				}
 			}
 			break;
 			
@@ -158,7 +158,14 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 				break;
 			}
 		}
-		echo "Not Found";
+		
+		// find profiel of user
+		if (preg_match("|^/(.+)$|", $_SERVER["REQUEST_URI"], $matches) AND preg_match("/[A-Za-z0-9._]/", $_SERVER["REQUEST_URI"], $matches))
+		{
+			
+		}	
+		
+		$factory->getIndexController()->showIndex();
 }
 
 

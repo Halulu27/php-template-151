@@ -13,8 +13,7 @@ class IndexController
 
   public function homepage() 
   {
-  	$user = $this->getUser();
-  	echo $this->template->render("index.html.twig", ["user" => $user]);
+  	echo $this->template->render("index.html.twig");
   }
 
   public function greet($name) 
