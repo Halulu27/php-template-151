@@ -35,12 +35,17 @@ class Factory
 	
 	public function getLoginController()
 	{
-		return new Controller\LoginController($this->getTwigEngine(), $this->getLoginService(), $this->getMailer());
+		return new Controller\LoginController($this->getTwigEngine(), $this->getLoginService(), $this);
 	}
 	
 	public function getProfileController()
 	{
 		return new Controller\ProfileController($this->getTwigEngine(), $this->getProfileService());
+	}
+	
+	public function getPostController()
+	{
+		return new Controller\PostController($this->getTwigEngine(), $this->getPostService(), $this);
 	}
 	
 	public function getMailer()
@@ -70,5 +75,29 @@ class Factory
 	public function getProfileService()
 	{
 		return new Service\Profile\ProfilePdoService($this->getPdo());
+	}
+	
+	public function getPostService()
+	{
+		return new Service\Post\PostPdoService($this->getPdo());
+	}
+
+	public function generateCsrf($csrfName)
+	{
+		$csrf = $this->generateString(50);
+		$_SESSION[$csrfName . "csrf"] = $csrf;
+		return $csrf;
+	}
+	
+	private function generateString($length)
+	{
+	  	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	  	$charactersLength = strlen($characters);
+	  	$randomString = '';
+	  	for ($i = 0; $i < $length; $i++)
+	  	{
+	  		$randomString .= $characters[rand(0, $charactersLength - 1)];
+	  	}
+	  	return $randomString;
 	}
 }

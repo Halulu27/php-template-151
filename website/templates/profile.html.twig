@@ -4,6 +4,11 @@
 {% endblock %}
 
 {% block content %}
+{% if SESSION.username == account.user.username %}
+<div>
+	<a href="/Post">Add Post</a>
+</div>
+{% endif %}
 <div>PostNummber{{ account.PostNumber }}</div>
 <div>FollowerNummer{{ account.FollowerNumber }}</div>
 <div>SubscriberNumber{{ account.SubscriberNumber }}</div>

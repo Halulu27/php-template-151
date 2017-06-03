@@ -13,4 +13,6 @@ interface ProfileService
 	public function getSubscriberNumber($userId);
 	
 	public function getPostNumber($userId);
+	
+	public function getUser($userId);
 }

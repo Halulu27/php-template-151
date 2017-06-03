@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{ parent() }} - Registration
+{% endblock %}
+<div>
+	<h1>Create new Post</h1>
+</div>
+<form action="/post" method="post">
+  <div>
+  	<label>Email:<label/>
+  	<input type="email" id="email" name="email" value="{{ email }}" />
+  </div>
+  {% if errormessage.email != null %}
+  	<div>{{ errormessage.email }}</div>
+  {% endif %}
+  <label>username:<label/>
+  <input type="text" id="username" name="username" value="{{ username }}"/><br/>
+  {% if errormessage.username != null %}
+  	<div>{{ errormessage.username }}</div>
+  {% endif %}
+  <label>Password:<label/>
+  <input type="password" name="password" value="" /><br/><br/>
+  {% if errormessage.password != null %}
+  	<div>{{ errormessage.password }}</div>
+  {% endif %}
+  <input type="hidden" name="addpostcsrf" value="{{ addpostcsrf }}">
+  <input id="submit" type="submit" value="Add Post" />
+</form>
+{% block content %}
+{% endblock %}

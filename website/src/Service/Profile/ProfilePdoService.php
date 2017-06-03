@@ -32,6 +32,17 @@ class ProfilePdoService implements ProfileService
 		return false;
 	}
 	
+	public function getUser($userId)
+	{
+		$stmt = $this->pdo->prepare("SELECT username FROM user WHERE Id=?;");
+		$stmt->bindValue(1, $userId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			return $stmt->fetch();
+		}
+	}
+	
 	public function getFollowerNumber($userId)
 	{
 		$stmt = $this->pdo->prepare("SELECT COUNT(followerId) FROM subscription WHERE followerId=?");

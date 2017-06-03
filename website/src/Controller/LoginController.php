@@ -9,44 +9,37 @@ class LoginController
 {
   private $template;
   private $loginService;
-  private $mailer;
+  private $factory;
 
-  public function __construct(\Twig_Environment $template, LoginService $loginService, $mailer)
+  public function __construct(\Twig_Environment $template, LoginService $loginService, $factory)
   {
     $this->template = $template;
     $this->loginService = $loginService;
-  	$this->mailer = $mailer;
+  	$this->factory = $factory;
   }
   
   public function showRegister($email = "", $username = "", $errormessage = "", $confirmation = false)
   {
-  	$csrf = $this->generateCsrf("register");
+  	$csrf = $this->factory->generateCsrf("register");
   	echo $this->template->render("register.html.twig", ["registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
   {
   	session_regenerate_id();
-  	$csrf = $this->generateCsrf("login");
+  	$csrf = $this->factory->generateCsrf("login");
   	echo $this->template->render("login.html.twig", ["logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
   }
   
   public function showPassword($reset = false)
   {
-  	$csrf = $this->generateCsrf("password");
+  	$csrf = $this->factory->generateCsrf("password");
   	echo $this->template->render("password.html.twig", ["passwordcsrf" => $csrf, "reset" => $reset]);
   }
   
   public function showResetPassword($resetString1, $resetString2, $errormessage = "")
   {
   	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
-  }
-  
-  public function generateCsrf($csrfName)
-  {
-  	$csrf = $this->generateString(50);
-  	$_SESSION[$csrfName . "csrf"] = $csrf;
-  	return $csrf;
   }
   
   public function checkEmail($email)
@@ -303,33 +296,21 @@ class LoginController
   	}
   	return false;
   }
-
-  public function generateString($length)
-  {
-  	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  	$charactersLength = strlen($characters);
-  	$randomString = '';
-  	for ($i = 0; $i < $length; $i++)
-  	{
-  		$randomString .= $characters[rand(0, $charactersLength - 1)];
-  	}
-  	return $randomString;
-  }
-  
-  public function generateLink($length = 25)
-  {
-  	$randomString = '';
-  	do
-  	{
-  		$randomString = $this->generateString($length);
-  		$result = $this->loginService->linkExists($randomString);
-  	} while ($result == true);
-  	return $randomString;
-  }
+	  
+	public function generateLink($length = 25)
+	{
+	  	$randomString = '';
+	  	do
+	  	{
+	  		$randomString = $this->factory->generateString($length);
+	  		$result = $this->loginService->linkExists($randomString);
+	  	} while ($result == true);
+		return $randomString;
+	}
   
   private function sendEmail($subject, $email, $message)
   {
-  	$this->mailer->send(
+  	$this->factory->getMailer()->send(
   			Swift_Message::newInstance("Socialize - " . $subject)
   			->setFrom(["socializeag@gmail.com" => "Socialize"])
   			->setTo($email)

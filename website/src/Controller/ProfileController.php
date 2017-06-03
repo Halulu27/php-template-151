@@ -22,6 +22,7 @@ class ProfileController
 		{
 			return;
 		}
+		$account["user"] = $this->profileService->getUser($userId);
 		$account["Posts"] = $this->profileService->getPosts($userId);
 		$account["PostNumber"] = $this->profileService->getPostNumber($userId);
 		$account["FollowerNumber"] = $this->profileService->getFollowerNumber($userId);

@@ -71,6 +71,26 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		}
 		break;
 		
+	case "/post":
+		if (isset($_SESSION["isLoggedIn"]))
+		{
+			if ($_SESSION["isLoggedIn"] == true && isset($_SESSION["username"]))
+			{
+				$cnt = $factory->getPostController();
+				if ($_SERVER["REQUEST_METHOD"] === "POST")
+				{
+					$cnt->savePost($_POST);
+				}
+				else
+				{
+					$cnt->showAddPost();
+				}
+				break;
+			}
+		}
+		header("Location: /");
+		break;
+		
 	//case "/test/upload":
 		//if(file_put_contents(__DIR__ . "/../../upload/test.txt", "Mein erster Upload")) {
 			//echo "It worked";
@@ -97,18 +117,6 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			else
 			{
 				$cnt->showPassword();
-			}
-			break;
-			
-		case "/profile":
-
-			if (isset($_SESSION["isLoggedIn"]))
-			{
-				if ($_SESSION["isLoggedIn"] == true && isset($_SESSION["username"]))
-				{
-					$cnt = $factory->getProfileController();
-					$cnt->showProfile($_SESSION["username"]);				
-				}
 			}
 			break;
 			
@@ -159,10 +167,23 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			}
 		}
 		
-		// find profiel of user
-		if (preg_match("|^/(.+)$|", $_SERVER["REQUEST_URI"], $matches) AND preg_match("/[A-Za-z0-9._]/", $_SERVER["REQUEST_URI"], $matches))
+		// find profile of user
+		if (preg_match("|^/(.+)/$|", $_SERVER["REQUEST_URI"], $matches))
 		{
-			
+			if (preg_match('/[A-Za-z0-9._]/', $matches[1]))
+			{
+				if (isset($_SESSION["isLoggedIn"]))
+				{
+					if ($_SESSION["isLoggedIn"] == true && isset($_SESSION["username"]))
+					{
+						$cnt = $factory->getProfileController();
+						$cnt->showProfile($matches[1]);
+						break;
+					}
+				}
+				header("Location: /");
+				break;				
+			}
 		}	
 		
 		$factory->getIndexController()->showIndex();
