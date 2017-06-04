@@ -71,7 +71,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		}
 		break;
 		
-	case "/post":
+	case "/addpost":
 		if (isset($_SESSION["isLoggedIn"]))
 		{
 			if ($_SESSION["isLoggedIn"] == true && isset($_SESSION["username"]))
@@ -122,7 +122,8 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			
 	default:
 		$matches = [];
-		if (preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
+		if (preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) 
+		{
 			$factory->getIndexController()->greet($matches[1]);
 			break;
 		}
@@ -172,17 +173,9 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		{
 			if (preg_match('/[A-Za-z0-9._]/', $matches[1]))
 			{
-				if (isset($_SESSION["isLoggedIn"]))
-				{
-					if ($_SESSION["isLoggedIn"] == true && isset($_SESSION["username"]))
-					{
-						$cnt = $factory->getProfileController();
-						$cnt->showProfile($matches[1]);
-						break;
-					}
-				}
-				header("Location: /");
-				break;				
+				$cnt = $factory->getProfileController();
+				$cnt->showProfile($matches[1]);
+				break;			
 			}
 		}	
 		

@@ -128,9 +128,9 @@ class LoginController
   
   public function register(array $data)
   {
-  	if (!array_key_exists("registercsrf", $_POST) && !isset($_POST["registercsrf"]) && trim($_POST["registercsrf"]) == '' && $_SESSION["registercsrf"] != $_POST["registercsrf"])
+  	if (!array_key_exists("registercsrf", $data) && !isset($data["registercsrf"]) && trim($data["registercsrf"]) == '' && $_SESSION["registercsrf"] != $data["registercsrf"])
   	{
-  		$cnt->showRegister();
+  		$this->showRegister();
   		return;
   	}
   	
@@ -207,9 +207,9 @@ class LoginController
   
   public function login(array $data)
   {
-  	if (!array_key_exists("logincsrf", $_POST) && !isset($_POST["logincsrf"]) && trim($_POST["logincsrf"]) == '' && $_SESSION["logincsrf"] != $_POST["logincsrf"])
+  	if (!array_key_exists("logincsrf", $data) && !isset($data["logincsrf"]) && trim($data["logincsrf"]) == '' && $_SESSION["logincsrf"] != $data["logincsrf"])
   	{
-  		$cnt->showLogin();
+  		$this->showLogin();
   		return;
   	}
   	
@@ -253,6 +253,7 @@ class LoginController
 	  		session_regenerate_id();
 			$_SESSION["email"] = $result["email"];
 			$_SESSION["username"] = $result["username"];
+			$_SESSION["Id"] = $result["Id"];
 			$_SESSION["isLoggedIn"] = true;
 	  		header("Location: /");
 	  		return;
@@ -269,7 +270,7 @@ class LoginController
   
   public function password(array $data)
   {
-	if (!array_key_exists("passwordcsrf", $_POST) && !isset($_POST["passwordcsrf"]) && trim($_POST["passwordcsrf"]) == '' && $_SESSION["passwordcsrf"] != $_POST["passwordcsrf"])
+	if (!array_key_exists("passwordcsrf", $data) && !isset($data["passwordcsrf"]) && trim($data["passwordcsrf"]) == '' && $_SESSION["passwordcsrf"] != $data["passwordcsrf"])
 	{
 		return false;
 	}	

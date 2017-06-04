@@ -17,9 +17,20 @@ class ProfileController
 	
 	public function showProfile($username)
 	{
+		// Only if you are logged in you are allowed to use Socialize!
+		if (isset($_SESSION["isLoggedIn"]))
+		{
+			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
+			{
+				header("Location: /");
+				return;				
+			}
+		}
+		
 		$userId = $this->profileService->getUserId($username);
 		if ($userId == false)
 		{
+			header("Location: /");
 			return;
 		}
 		$account["user"] = $this->profileService->getUser($userId);

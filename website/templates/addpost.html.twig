@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{ parent() }} - Create New Post
+{% endblock %}
+
+{% block content %}
+<div>
+	<h1>Create new Post</h1>
+</div>
+<form action="/addpost" method="post" enctype="multipart/form-data" name="addPost">
+
+  <label>File:<label/>
+  <input type="file" id="file" name="file"/><br/>
+  {% if errormessage.file != null %}
+  	<div>{{ errormessage.file }}</div>
+  {% endif %}
+  
+  <div>
+  	<label>Comment:<label/>
+  	<input type="text" id="comment" name="comment" value="{{ comment }}" />
+  </div>
+  
+  <label>Hashtag:<label/>
+  <input type="text" id="hashtag" name="hashtag" value="{{ hashtag }}" /><br/><br/>
+  
+  <input type="hidden" name="MAX_FILE_SIZE" value="2000000">  
+  <input type="hidden" id="addpostcsrf" name="addpostcsrf" value="{{ addpostcsrf }}">
+  <input id="addpost" type="submit" value="Add Post" />
+</form>
+{% endblock %}

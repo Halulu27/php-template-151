@@ -15,8 +15,12 @@ class ProfilePdoService implements ProfileService
 	{
 		$stmt = $this->pdo->prepare("SELECT * FROM post WHERE userId=?;");
 		$stmt->bindValue(1, $userId);
-		$stmt->execute();		
-		return $stmt->fetch();
+		$stmt->execute();
+		if ($stmt->rowCount() > 0)
+		{
+			return $stmt->fetch();			
+		}
+		return false;
 	}
 	
 	public function getUserId($username)
