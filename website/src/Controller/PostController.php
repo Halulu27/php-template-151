@@ -8,13 +8,11 @@ class PostController
 {
 	private $template;
 	private $postService;
-	private $factory;
 	
-	public function __construct(\Twig_Environment $template, PostService $postService, $factory)
+	public function __construct(\Twig_Environment $template, PostService $postService)
 	{
 		$this->template = $template;
 		$this->postService = $postService;
-		$this->factory = $factory;
 	}
 	
 	public function showAddPost($comment = "", $hashtag = "", $errormessage = "")

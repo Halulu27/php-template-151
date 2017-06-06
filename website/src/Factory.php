@@ -40,12 +40,22 @@ class Factory
 	
 	public function getProfileController()
 	{
-		return new Controller\ProfileController($this->getTwigEngine(), $this->getProfileService());
+		return new Controller\ProfileController($this->getTwigEngine(), $this->getProfileService(), $this);
 	}
 	
 	public function getPostController()
 	{
-		return new Controller\PostController($this->getTwigEngine(), $this->getPostService(), $this);
+		return new Controller\PostController($this->getTwigEngine(), $this->getPostService());
+	}
+	
+	public function getPictureController()
+	{
+		return new Controller\PictureController($this->getTwigEngine(), $this->getPictureService());
+	}
+	
+	public function getSubscriptionController()
+	{
+		return new Controller\SubscriptionController($this->getTwigEngine(), $this->getSubscriptionService());
 	}
 	
 	public function getMailer()
@@ -80,6 +90,16 @@ class Factory
 	public function getPostService()
 	{
 		return new Service\Post\PostPdoService($this->getPdo());
+	}
+	
+	public function getPictureService()
+	{
+		return new Service\Picture\PicturePdoService($this->getPdo());
+	}
+	
+	public function getSubscriptionService()
+	{
+		return new Service\Subscription\SubscriptionPdoService($this->getPdo());
 	}
 
 	public function generateCsrf($csrfName)

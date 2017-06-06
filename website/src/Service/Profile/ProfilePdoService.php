@@ -13,12 +13,22 @@ class ProfilePdoService implements ProfileService
 	
 	public function getPosts($userId)
 	{
-		$stmt = $this->pdo->prepare("SELECT * FROM post WHERE userId=?;");
+		$stmt = $this->pdo->prepare("SELECT Id, mediaId, comment FROM post WHERE userId=?;");
 		$stmt->bindValue(1, $userId);
 		$stmt->execute();
 		if ($stmt->rowCount() > 0)
 		{
-			return $stmt->fetch();			
+			$data = array();
+			$i = 0;
+			while ($row = $stmt->fetch($this->pdo::FETCH_NUM, $this->pdo::FETCH_ORI_NEXT)) 
+			{
+				$data[$i][0] = $row[0];
+				$data[$i][1] = $row[1];
+				$data[$i][2] = $row[2];
+				$i++;
+			}
+			//$result = $stmt->fetch();
+			return $data;
 		}
 		return false;
 	}
@@ -81,5 +91,31 @@ class ProfilePdoService implements ProfileService
 			$result = $stmt->fetch();
 			return $result[0];
 		}
+	}
+	
+	public function getMedia($mediaId)
+	{
+		$stmt = $this->pdo->prepare("SELECT uploadTime, type, content FROM media WHERE Id=?;");
+		$stmt->bindValue(1, $mediaId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			$result = $stmt->fetch();
+			return $result;
+		}
+		return false;
+	}
+	
+	public function isSubscribed($targetId, $userId)
+	{
+		$stmt = $this->pdo->prepare("SELECT Id FROM subscription WHERE followerId=? AND userId=?;");
+		$stmt->bindValue(1, $targetId);
+		$stmt->bindValue(2, $userId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			return 1;
+		}
+		return 0;
 	}
 }

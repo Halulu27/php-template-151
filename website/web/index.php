@@ -120,6 +120,16 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			}
 			break;
 			
+		case "/updateSubscription":
+			{
+				if ($_SERVER["REQUEST_METHOD"] === "POST")
+				{
+					$cnt = $factory->getSubscriptionController();
+					$cnt->updateSubscription($_POST);
+					break;
+				}
+			}
+			
 	default:
 		$matches = [];
 		if (preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) 
@@ -169,7 +179,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		}
 		
 		// find profile of user
-		if (preg_match("|^/(.+)/$|", $_SERVER["REQUEST_URI"], $matches))
+		if (preg_match("|^/(.+)$|", $_SERVER["REQUEST_URI"], $matches))
 		{
 			if (preg_match('/[A-Za-z0-9._]/', $matches[1]))
 			{
@@ -177,7 +187,14 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 				$cnt->showProfile($matches[1]);
 				break;			
 			}
-		}	
+		}
+		
+		if (preg_match("|^/post/(\d+)/image$|", $_SERVER["REQUEST_URI"], $matches))
+		{
+			$cnt = $factory->getPictureController();
+			$cnt->renderPicture($matches[1]);
+			break;
+		}
 		
 		$factory->getIndexController()->showIndex();
 }

@@ -15,4 +15,8 @@ interface ProfileService
 	public function getPostNumber($userId);
 	
 	public function getUser($userId);
+	
+	public function getMedia($mediaId);
+	
+	public function isSubscribed($targetId, $userId);
 }

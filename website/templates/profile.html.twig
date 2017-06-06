@@ -9,7 +9,32 @@
 	<a href="/addpost">Add Post</a>
 </div>
 {% endif %}
+{% if SESSION.username != account.user.username %}
+<div>
+	<form action="/updateSubscription" method="post">
+		<input type="hidden" id="target" name="target" value="{{ account.user.username }}">
+		<input type="hidden" id="addSubscriptioncsrf" name="addSubscriptioncsrf" value="{{ account.addSubscriptioncsrf }}">
+		{% if not account.subscribed %}
+		<input type="submit" id="submit" value="Subscribe">
+		{% else %}
+		<input type="submit" id="submit" value="Unsubscribe">
+		{% endif %}
+	</form>
+</div>
+{% endif %}
 <div>PostNummber{{ account.PostNumber }}</div>
 <div>FollowerNummer{{ account.FollowerNumber }}</div>
 <div>SubscriberNumber{{ account.SubscriberNumber }}</div>
+{% if account.Posts is not empty %}
+<div>
+	Posts
+	{% for singlePost in account.Posts %}
+        {{ singlePost.Id }}
+        {{ singlePost.comment }}
+        {{ singlePost.uploadTime }}
+        {{ singlePost.type }}
+        <img alt="post file" src="data:{{ singlePost.type|raw }};base64,{{ singlePost.content|raw }}" />
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}
