@@ -48,7 +48,7 @@ class ProfilePdoService implements ProfileService
 	
 	public function getUser($userId)
 	{
-		$stmt = $this->pdo->prepare("SELECT username FROM user WHERE Id=?;");
+		$stmt = $this->pdo->prepare("SELECT username, mediaId FROM user WHERE Id=?;");
 		$stmt->bindValue(1, $userId);
 		$stmt->execute();
 		if ($stmt->rowCount() == 1)
@@ -117,5 +117,51 @@ class ProfilePdoService implements ProfileService
 			return 1;
 		}
 		return 0;
+	}
+	
+	public function removeProfileMediaId($userId)
+	{
+		$stmt = $this->pdo->prepare("UPDATE user SET mediaId=NULL WHERE Id=?;");
+		$stmt->bindValue(1, $userId);
+		return $stmt->execute();
+	}
+	
+	public function addProfilMediaId($userId, $mediaId)
+	{
+		$stmt = $this->pdo->prepare("UPDATE user SET mediaId=? WHERE Id=?;");
+		$stmt->bindValue(1, $mediaId);
+		$stmt->bindValue(2, $userId);
+		return $stmt->execute();
+	}
+	
+	public function deleteMedia($mediaId)
+	{
+		$stmt = $this->pdo->prepare("DELETE FROM media WHERE Id=?;");
+		$stmt->bindValue(1, $mediaId);
+		return $stmt->execute();
+	}
+	
+	public function saveMedia($content, $type, $timeStamp, $userId)
+	{
+		$stmt = $this->pdo->prepare("INSERT INTO media (userId, uploadTime, type, content) VALUES (?, ?, ?, ?);");
+		$stmt->bindValue(1, $userId);
+		$stmt->bindValue(2, $timeStamp);
+		$stmt->bindValue(3, $type);
+		$stmt->bindValue(4, $content);
+		return $stmt->execute();
+	}
+	
+	public function getMediaId($userId, $timeStamp)
+	{
+		$stmt = $this->pdo->prepare("SELECT Id FROM media WHERE uploadTime=? AND userId=?;");
+		$stmt->bindValue(1, $timeStamp);
+		$stmt->bindValue(2, $userId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			$result = $stmt->fetch();
+			return $result["Id"];
+		}
+		return false;
 	}
 }

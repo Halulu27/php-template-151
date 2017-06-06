@@ -130,6 +130,16 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 				}
 			}
 			
+		case "/updateprofilepicture":
+			{
+				if ($_SERVER["REQUEST_METHOD"] === "POST")
+				{
+					$cnt = $factory->getProfileController();
+					$cnt->updateProfilePicture($_POST);
+					break;
+				}
+			}
+			
 	default:
 		$matches = [];
 		if (preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) 

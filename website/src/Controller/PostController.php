@@ -8,11 +8,13 @@ class PostController
 {
 	private $template;
 	private $postService;
+	private $factory;
 	
-	public function __construct(\Twig_Environment $template, PostService $postService)
+	public function __construct(\Twig_Environment $template, PostService $postService, $factory)
 	{
 		$this->template = $template;
 		$this->postService = $postService;
+		$this->factory = $factory;
 	}
 	
 	public function showAddPost($comment = "", $hashtag = "", $errormessage = "")
@@ -23,6 +25,21 @@ class PostController
 	
 	public function savePost(array $data)
 	{
+		// Only if you are logged in you are allowed to use Socialize!
+		if (isset($_SESSION["isLoggedIn"]))
+		{
+			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
+			{
+				header("Location: /");
+				return;				
+			}
+		}
+		else if (!isset($_SESSION["isLoggedIn"]))
+		{
+			header("Location: /");
+			return;
+		}
+		
 	  	if (!array_key_exists("addpostcsrf", $_POST) && !isset($_POST["addpostcsrf"]) && trim($_POST["addpostcsrf"]) == '' && $_SESSION["addpostcsrf"] != $_POST["addpostcsrf"])
 	  	{
 	  		$this->showAddPost("failed");
@@ -40,10 +57,10 @@ class PostController
 	  	{
 	  		$errormessage["file"] = "Upload your image or video";
 	  	}*/
-	  	/*if ($_FILES['file']['type'] != "file/jpg" && $_FILES['file']['type'] != "file/png" && $_FILES['file']['type'] != "file/jpeg" && $_FILES['file']['type'] != "file/gif" && $_FILES['file']['type'] != "file/mp4")
+	  	if ($_FILES['file']['type'] != "image/jpg" && $_FILES['file']['type'] != "image/png" && $_FILES['file']['type'] != "image/jpeg" && $_FILES['file']['type'] != "image/gif"/* && $_FILES['file']['type'] != "file/mp4"*/)
 	  	{
 	  		$errormessage["file"] = "Only JPG, JPEG, PNG, GIF and MP4 files are allowed!";
-	  	}*/
+	  	}
 	  	if (isset($errormessage["file"]))
 	  	{
 	  		$this->showAddPost($data["comment"], $data["hashtag"], $errormessage);
@@ -105,6 +122,20 @@ class PostController
 			$this->showAddPost();
 			return;
 		} */
+		// Only if you are logged in you are allowed to use Socialize!
+		if (isset($_SESSION["isLoggedIn"]))
+		{
+			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
+			{
+				header("Location: /");
+				return;
+			}
+		}
+		else if (!isset($_SESSION["isLoggedIn"]))
+		{
+			header("Location: /");
+			return;
+		}
 		
 		if (!isset($postId))
 		{

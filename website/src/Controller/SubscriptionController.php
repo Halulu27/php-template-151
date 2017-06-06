@@ -26,6 +26,11 @@ class SubscriptionController
 				return;				
 			}
 		}
+		else if (!isset($_SESSION["isLoggedIn"]))
+		{
+			header("Location: /");
+			return;
+		}
 		
 		if (!array_key_exists("addSubscriptioncsrf", $data) && !isset($data["addSubscriptioncsrf"]) && trim($data["addSubscriptioncsrf"]) == '' && $_SESSION["addSubscriptioncsrf"] != $data["addSubscriptioncsrf"])
 		{

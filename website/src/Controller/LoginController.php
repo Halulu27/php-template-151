@@ -265,6 +265,7 @@ class LoginController
   public function logout(array $data)
   {
   	// implement csrf security
+  	
   	session_destroy();
   }
   

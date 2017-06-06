@@ -17,7 +17,7 @@ class PictureController
 	
 	public function renderPicture($mediaId)
 	{
-		// Only if you are logged in you are allowed to use all the features of Socialize!
+		// Only if you are logged in you are allowed to use Socialize!
 		if (isset($_SESSION["isLoggedIn"]))
 		{
 			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
@@ -25,6 +25,11 @@ class PictureController
 				header("Location: /");
 				return;				
 			}
+		}
+		else if (!isset($_SESSION["isLoggedIn"]))
+		{
+			header("Location: /");
+			return;
 		}
 		
 		$mediaFile = $this->pictureService->getMediaFile($mediaId);

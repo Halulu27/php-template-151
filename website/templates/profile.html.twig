@@ -22,6 +22,24 @@
 	</form>
 </div>
 {% endif %}
+<div>
+    {% if account.removeProfilePicturecsrf is not empty %}
+    <div>
+    	<form action="/updateprofilepicture" method="post">
+    		<input type="hidden" id="removeProfilePicturecsrf" name="removeProfilePicturecsrf" value="{{ account.removeProfilePicturecsrf }}">
+    		<input type="submit" id="RemoveProfilePicture" value="Remove Profile Picture"> 
+    	</form>
+    </div>
+    {% endif %}
+    <div>
+    	<form action="/updateprofilepicture" method="post" enctype="multipart/form-data" name="change profile picture">
+    		<input type="hidden" name="MAX_FILE_SIZE" value="2000000">  
+      		<input type="file" id="picture" name="picture"/>
+    		<input type="hidden" id="changeProfilePicturecsrf" name="changeProfilePicturecsrf" value="{{ account.changeProfilePicturecsrf }}">
+    		<input type="submit" id="changeProfilePicture" value="Change Profile Picture">
+    	</form>
+    </div>
+</div>
 <div>PostNummber{{ account.PostNumber }}</div>
 <div>FollowerNummer{{ account.FollowerNumber }}</div>
 <div>SubscriberNumber{{ account.SubscriberNumber }}</div>

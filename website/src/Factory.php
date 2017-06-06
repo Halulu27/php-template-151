@@ -45,7 +45,7 @@ class Factory
 	
 	public function getPostController()
 	{
-		return new Controller\PostController($this->getTwigEngine(), $this->getPostService());
+		return new Controller\PostController($this->getTwigEngine(), $this->getPostService(), $this);
 	}
 	
 	public function getPictureController()
