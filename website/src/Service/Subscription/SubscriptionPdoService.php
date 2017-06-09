@@ -19,7 +19,7 @@ class SubscriptionPdoService implements SubscriptionService
 		if ($stmt->rowCount() == 1)
 		{
 			$result = $stmt->fetch();
-			return $result[0][0];
+			return $result["Id"];
 		}
 		return false;
 	}

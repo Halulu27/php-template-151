@@ -20,15 +20,7 @@ class ProfileController
 	public function showProfile($username)
 	{
 		// Only if you are logged in you are allowed to use Socialize!
-		if (isset($_SESSION["isLoggedIn"]))
-		{
-			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
-			{
-				header("Location: /");
-				return;				
-			}
-		}
-		else if (!isset($_SESSION["isLoggedIn"]))
+		if (!isset($_SESSION["isLoggedIn"]))
 		{
 			header("Location: /");
 			return;
@@ -84,15 +76,7 @@ class ProfileController
 	public function updateProfilePicture($data)
 	{
 		// Only if you are logged in you are allowed to use Socialize!
-		if (isset($_SESSION["isLoggedIn"]))
-		{
-			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
-			{
-				header("Location: /");
-				return;
-			}
-		}
-		else if (!isset($_SESSION["isLoggedIn"]))
+		if (!isset($_SESSION["isLoggedIn"]))
 		{
 			header("Location: /");
 			return;

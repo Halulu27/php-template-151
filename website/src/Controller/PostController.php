@@ -19,6 +19,12 @@ class PostController
 	
 	public function showAddPost($comment = "", $hashtag = "", $errormessage = "")
 	{
+		if (!isset($_SESSION["isLoggedIn"]))
+		{
+			header("Location: /");
+			return;
+		}
+		
 		$csrf = $this->factory->generateCsrf("addpost");
 		echo $this->template->render("addpost.html.twig", ["addpostcsrf" => $csrf, "comment" => $comment, "hashtag" => $hashtag, "errormessage" => $errormessage]);
 	}
@@ -26,15 +32,7 @@ class PostController
 	public function savePost(array $data)
 	{
 		// Only if you are logged in you are allowed to use Socialize!
-		if (isset($_SESSION["isLoggedIn"]))
-		{
-			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
-			{
-				header("Location: /");
-				return;				
-			}
-		}
-		else if (!isset($_SESSION["isLoggedIn"]))
+		if (!isset($_SESSION["isLoggedIn"]))
 		{
 			header("Location: /");
 			return;
@@ -119,15 +117,7 @@ class PostController
 			return;
 		} */
 		// Only if you are logged in you are allowed to use Socialize!
-		if (isset($_SESSION["isLoggedIn"]))
-		{
-			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
-			{
-				header("Location: /");
-				return;
-			}
-		}
-		else if (!isset($_SESSION["isLoggedIn"]))
+		if (!isset($_SESSION["isLoggedIn"]))
 		{
 			header("Location: /");
 			return;

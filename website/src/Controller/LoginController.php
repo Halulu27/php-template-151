@@ -20,12 +20,24 @@ class LoginController
   
   public function showRegister($email = "", $username = "", $errormessage = "", $confirmation = false)
   {
+	if (isset($_SESSION["isLoggedIn"]))
+	{
+		header("Location: /");
+		return;
+	}
+	
   	$csrf = $this->factory->generateCsrf("register");
   	echo $this->template->render("register.html.twig", ["registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
   {
+	if (isset($_SESSION["isLoggedIn"]))
+	{
+		header("Location: /");
+		return;
+	}
+  	
   	session_regenerate_id();
   	$csrf = $this->factory->generateCsrf("login");
   	echo $this->template->render("login.html.twig", ["logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
@@ -70,11 +82,11 @@ class LoginController
   {
   	if ($this->loginService->userActivation($activationString1, $activationString2))
   	{
-  		return true;
+  		$this->showLogin();
   	}
   	else
   	{
-  		return false;
+  		header("Location: /");
   	}
   }
 
@@ -90,8 +102,15 @@ class LoginController
   	 }
   }
   
-  public function resetPassword($email, array $data, $resetString1, $resetString2)
+  public function resetPassword(array $data, $resetString1, $resetString2)
   {
+  	$email = $cnt->checkResetString($resetString1, $resetString2);
+  	if ($email == false)
+  	{
+  		header("Location: /");
+  		return;
+  	}
+  	
   	if (!array_key_exists("password", $data) OR !array_key_exists("confirmpassword", $data))
   	{
   		$this->showResetPassword($resetString1, $resetString2);
@@ -117,17 +136,23 @@ class LoginController
   	$passwordhash = password_hash($data["password"], PASSWORD_DEFAULT);
   	if ($this->loginService->renewPassword($email, $passwordhash) == true)
   	{
-  		return true;
+  		$this->showLogin();
   	}
   	else
   	{
   		$this->showResetPassword($resetString1, $resetString2, "");
-  		return false;
+  		header("Location: /");
   	}
   }
   
   public function register(array $data)
   {
+	if (isset($_SESSION["isLoggedIn"]))
+	{
+		header("Location: /");
+		return;
+	}
+	
   	if (!array_key_exists("registercsrf", $data) && !isset($data["registercsrf"]) && trim($data["registercsrf"]) == '' && $_SESSION["registercsrf"] != $data["registercsrf"])
   	{
   		$this->showRegister();
@@ -198,7 +223,7 @@ class LoginController
 			If you have not created a new account you can ignore this email.</p>
 					<a href="' . $link . '">' . $link .'</a></div>';
   		$this->sendEmail("Activate your account", $data["email"], $message);
-  		return $message;
+  		$this->showRegister("", "", "", true);
   	}
   	$errormessage["email"] = "Failed hard";
   	$this->showRegister($data["email"], $data["username"], $errormessage);
@@ -207,6 +232,12 @@ class LoginController
   
   public function login(array $data)
   {
+	if (isset($_SESSION["isLoggedIn"]))
+	{
+		header("Location: /");
+		return;
+	}
+	
   	if (!array_key_exists("logincsrf", $data) && !isset($data["logincsrf"]) && trim($data["logincsrf"]) == '' && $_SESSION["logincsrf"] != $data["logincsrf"])
   	{
   		$this->showLogin();
@@ -265,8 +296,14 @@ class LoginController
   public function logout(array $data)
   {
   	// implement csrf security
+	if (!isset($_SESSION["isLoggedIn"]))
+	{
+		header("Location: /");
+		return;
+	}
   	
   	session_destroy();
+	header("Location: /");
   }
   
   public function password(array $data)
@@ -294,21 +331,21 @@ class LoginController
 							If you have reset your password you can ignore this email.</p>
 							<a href="' . $link . '">' . $link .'</a></div>';
   		$this->sendEmail("Reset password", $email, $message);
-  		return true;
+  		$this->showPassword(true);
   	}
-  	return false;
+  	$this->showPassword();
   }
 	  
-	public function generateLink($length = 25)
-	{
-	  	$randomString = '';
-	  	do
-	  	{
-	  		$randomString = $this->factory->generateString($length);
-	  		$result = $this->loginService->linkExists($randomString);
-	  	} while ($result == true);
-		return $randomString;
-	}
+  public function generateLink($length = 25)
+  {
+	  $randomString = '';
+	  do
+	  {
+	  	$randomString = $this->factory->generateString($length);
+	  	$result = $this->loginService->linkExists($randomString);
+	  } while ($result == true);
+	  return $randomString;
+  }
   
   private function sendEmail($subject, $email, $message)
   {

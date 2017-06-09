@@ -104,7 +104,7 @@ class LoginPdoService implements LoginService
 	
 	public function resetStringCorrect($resetString1, $resetString2)
 	{
-		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE resetString1=? AND resetString2=?;");
+		$stmt = $this->pdo->prepare("SELECT email FROM user WHERE resetString1=? AND resetString2=?;");
 		$stmt->bindValue(1, $resetString1);
 		$stmt->bindValue(2, $resetString2);
 		$stmt->execute();

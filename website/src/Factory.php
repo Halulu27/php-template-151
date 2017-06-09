@@ -30,7 +30,7 @@ class Factory
 	
 	public function getIndexController()
 	{
-		return new Controller\IndexController($this->getTwigEngine());
+		return new Controller\IndexController($this->getTwigEngine(), $this->getSearchService());
 	}
 	
 	public function getLoginController()
@@ -100,6 +100,11 @@ class Factory
 	public function getSubscriptionService()
 	{
 		return new Service\Subscription\SubscriptionPdoService($this->getPdo());
+	}
+	
+	public function getSearchService()
+	{
+		return new Service\Search\SearchPdoService($this->getPdo());
 	}
 
 	public function generateCsrf($csrfName)

@@ -17,21 +17,13 @@ class PictureController
 	
 	public function renderPicture($mediaId)
 	{
-		// Only if you are logged in you are allowed to use Socialize!
-		/*
-		if (isset($_SESSION["isLoggedIn"]))
+		// Only if you are logged in you are allowed to use Socialize!		
+		if (!isset($_SESSION["isLoggedIn"]))
 		{
-			if ($_SESSION["isLoggedIn"] == false || !isset($_SESSION["username"]))
-			{
-				header("Location: /");
-				return;				
-			}
-		}
-		else {
 			http_response_code(404);
 			header("Location: /");
 			return;
-		}*/
+		}
 		
 		if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
 			if(strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) < time() - 600) {
