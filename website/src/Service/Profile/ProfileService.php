@@ -20,8 +20,6 @@ interface ProfileService
 	
 	public function isSubscribed($targetId, $userId);
 	
-	public function removeProfileMediaId($userId);
-	
 	public function addProfilMediaId($userId, $mediaId);
 	
 	public function deleteMedia($mediaId);

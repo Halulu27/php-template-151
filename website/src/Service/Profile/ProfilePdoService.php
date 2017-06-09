@@ -119,13 +119,6 @@ class ProfilePdoService implements ProfileService
 		return 0;
 	}
 	
-	public function removeProfileMediaId($userId)
-	{
-		$stmt = $this->pdo->prepare("UPDATE user SET mediaId=NULL WHERE Id=?;");
-		$stmt->bindValue(1, $userId);
-		return $stmt->execute();
-	}
-	
 	public function addProfilMediaId($userId, $mediaId)
 	{
 		$stmt = $this->pdo->prepare("UPDATE user SET mediaId=? WHERE Id=?;");

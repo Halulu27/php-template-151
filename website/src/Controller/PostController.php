@@ -89,11 +89,7 @@ class PostController
 	  	}
 	  	
 	  	// Save new Post
-	  	$tmpName  = $_FILES['file']['tmp_name'];
-	  	$fp = fopen($tmpName, 'r');
-	  	$content = fread($fp, filesize($tmpName));
-	  	$content = addslashes($content);
-	  	fclose($fp);
+	  	$content = file_get_contents($_FILES['file']['tmp_name']);
 	  	
 	  	$timeStamp = date('Y-m-d H:i:s');
 	  	if ($this->postService->saveMedia($content, $_FILES["file"]["type"], $timeStamp, $_SESSION["Id"]) != false)

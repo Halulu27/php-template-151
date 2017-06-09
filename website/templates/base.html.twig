@@ -7,30 +7,35 @@
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"/>
 <head>
 	<title>{% block title 'Socialize' %}</title>
+	<link rel="icon" type="image/png" href="/pictures/socialize.png" />
 </head>
 <body>
-    {% if SESSION.username != "" %}
-    	<div>
-    		<a href="/{{ SESSION.username }}">Profile</a>
+	<div Id="bodycontent">
+        {% if SESSION.username != "" %}
+        	<div>
+        		<a href="/{{ SESSION.username }}">Profile</a>
+        	</div>
+        	<div>
+        		<p>You are logged in as {{ SESSION.username }}</p>
+        	</div>
+        	<div>
+            	<form action="/logout" method="post">
+              		<!-- <input type="hidden" name="logoutcsrf" value="{{ "logoutcsrf" }}"> -->
+            		<input id="logout" type="submit" value="Logout" />
+            	</form>
+            </div>
+        {% else %}
+        	<div>
+        		<a href="/login">Login</a>
+        	</div>
+        	<div>
+        		<a href="/register">Register</a>
+        	</div>
+        {% endif %}
+        
+        <div id="content">
+    	    {% block content %}{% endblock %}
     	</div>
-    	<div>
-    		<p>You are logged in as {{ SESSION.username }}</p>
-    	</div>
-    	<div>
-        	<form action="/logout" method="post">
-          		<!-- <input type="hidden" name="logoutcsrf" value="{{ "logoutcsrf" }}"> -->
-        		<input id="logout" type="submit" value="Logout" />
-        	</form>
-        </div>
-    {% else %}
-    	<div>
-    		<a href="/login">Login</a>
-    	</div>
-    	<div>
-    		<a href="/register">Register</a>
-    	</div>
-    {% endif %}
-    
-	{% block content %}{% endblock %}
+	</div>
 </body>
 </html>

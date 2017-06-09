@@ -4,54 +4,88 @@
 {% endblock %}
 
 {% block content %}
-{% if SESSION.username == account.user.username %}
+
 <div>
-	<a href="/addpost">Add Post</a>
+	<div id="username">
+    	<div>
+        	{% if account.user.mediaId is not empty %}
+        		<img id="profilepicture" alt="profile picture" src="/media/{{ account.user.mediaId }}/file">
+        	{% else %}
+        		<img id="profilepicture" alt="alternative profile picture" src="/pictures/profilepicture.png">
+        	{% endif %}
+    	</div>
+    	<div>
+    		{{ account.user.username }}
+    	</div>
+    </div>
+	<div>
+    	<div>
+    		<div>{{ account.PostNumber }}</div>
+    		<div>Anzahl Posts</div>
+    	</div>
+        <div>
+        	<div>{{ account.FollowerNumber }}</div>
+        	<div>Anzahl Follower</div>
+        </div>
+        <div>
+        	Anzahl Abonnementen{{ account.SubscriberNumber }}
+        </div>
+    </div>
 </div>
-{% endif %}
-{% if SESSION.username != account.user.username %}
-<div>
-	<form action="/updateSubscription" method="post">
-		<input type="hidden" id="target" name="target" value="{{ account.user.username }}">
-		<input type="hidden" id="addSubscriptioncsrf" name="addSubscriptioncsrf" value="{{ account.addSubscriptioncsrf }}">
-		{% if not account.subscribed %}
-		<input type="submit" id="submit" value="Subscribe">
-		{% else %}
-		<input type="submit" id="submit" value="Unsubscribe">
-		{% endif %}
-	</form>
-</div>
-{% endif %}
-<div>
-    {% if account.removeProfilePicturecsrf is not empty %}
+<div id="userActions">
+    {% if SESSION.username == account.user.username %}
     <div>
-    	<form action="/updateprofilepicture" method="post">
-    		<input type="hidden" id="removeProfilePicturecsrf" name="removeProfilePicturecsrf" value="{{ account.removeProfilePicturecsrf }}">
-    		<input type="submit" id="RemoveProfilePicture" value="Remove Profile Picture"> 
-    	</form>
+    	<a href="/addpost">Add Post</a>
     </div>
     {% endif %}
+    
+    {% if SESSION.username != account.user.username %}
     <div>
-    	<form action="/updateprofilepicture" method="post" enctype="multipart/form-data" name="change profile picture">
-    		<input type="hidden" name="MAX_FILE_SIZE" value="2000000">  
-      		<input type="file" id="picture" name="picture"/>
-    		<input type="hidden" id="changeProfilePicturecsrf" name="changeProfilePicturecsrf" value="{{ account.changeProfilePicturecsrf }}">
-    		<input type="submit" id="changeProfilePicture" value="Change Profile Picture">
+    	<form action="/updateSubscription" method="post">
+    		<input type="hidden" id="target" name="target" value="{{ account.user.username }}">
+    		<input type="hidden" id="addSubscriptioncsrf" name="addSubscriptioncsrf" value="{{ account.addSubscriptioncsrf }}">
+    		{% if not account.subscribed %}
+    		<input type="submit" id="submit" value="Subscribe">
+    		{% else %}
+    		<input type="submit" id="submit" value="Unsubscribe">
+    		{% endif %}
     	</form>
     </div>
+    {% else %}
+    <div>
+        {% if account.removeProfilePicturecsrf is not empty %}
+        <div>
+        	<form action="/updateprofilepicture" method="post">
+        		<input type="hidden" id="removeProfilePicturecsrf" name="removeProfilePicturecsrf" value="{{ account.removeProfilePicturecsrf }}">
+        		<input type="submit" id="RemoveProfilePicture" value="Remove Profile Picture"> 
+        	</form>
+        </div>
+        {% endif %}
+        <div>
+        	<form action="/updateprofilepicture" method="post" enctype="multipart/form-data" name="change profile picture">
+        		<input type="hidden" name="MAX_FILE_SIZE" value="2000000">  
+          		<input type="file" id="picture" name="picture"/>
+        		<input type="hidden" id="changeProfilePicturecsrf" name="changeProfilePicturecsrf" value="{{ account.changeProfilePicturecsrf }}">
+        		<input type="submit" id="changeProfilePicture" value="Change Profile Picture">
+        	</form>
+        </div>
+    </div>
+    {% endif %}
 </div>
-<div>PostNummber{{ account.PostNumber }}</div>
-<div>FollowerNummer{{ account.FollowerNumber }}</div>
-<div>SubscriberNumber{{ account.SubscriberNumber }}</div>
+
 {% if account.Posts is not empty %}
 <div>
 	Posts
 	{% for singlePost in account.Posts %}
-        {{ singlePost.Id }}
-        {{ singlePost.comment }}
-        {{ singlePost.uploadTime }}
-        {{ singlePost.type }}
-        <img alt="post file" src="data:{{ singlePost.type|raw }};base64,{{ singlePost.content|raw }}" />
+		<div>
+			<div>
+            	<img alt="post file" src="/media/{{ singlePost.postId }}/file" />
+            </div>
+            <div>
+                {{ singlePost.comment }}
+                {{ singlePost.uploadTime|date("d.m.Y") }}
+            </div>
+		</div>
     {% endfor %}
 </div>
 {% endif %}

@@ -9,6 +9,7 @@ $factory = halulu27\Factory::createFromInitFile(__DIR__. "/../config.ini");
 $pdo = $factory->getPdo();
 $loginService = $factory->getLoginService();
 
+
 switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/":
 		$factory->getIndexController()->homepage();
@@ -99,46 +100,47 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		//}
 		//brea;
 		
-		case "/register/checkemail":
-			return $factory->getLoginController()->checkEmail($_REQUEST["email"]);
-			break;
+	case "/register/checkemail":
+		return $factory->getLoginController()->checkEmail($_REQUEST["email"]);
+		break;
+	
+	case "/register/checkusername":
+		return $factory->getLoginController()->checkUsername($_REQUEST["username"]);
+		break;
 		
-		case "/register/checkusername":
-			return $factory->getLoginController()->checkUsername($_REQUEST["username"]);
-			break;
-			
-		case "/password":
-			$cnt = $factory->getLoginController();
+	case "/password":
+		$cnt = $factory->getLoginController();
+		if ($_SERVER["REQUEST_METHOD"] === "POST")
+		{
+			$worked = $cnt->password($_POST);
+			$cnt->showPassword($worked);
+		}
+		else
+		{
+			$cnt->showPassword();
+		}
+		break;
+		
+	case "/updateSubscription":
+		
 			if ($_SERVER["REQUEST_METHOD"] === "POST")
 			{
-				$worked = $cnt->password($_POST);
-				$cnt->showPassword($worked);
+				$cnt = $factory->getSubscriptionController();
+				$cnt->updateSubscription($_POST);
+				break;
 			}
-			else
+		
+		
+	case "/updateprofilepicture":
+		
+			if ($_SERVER["REQUEST_METHOD"] === "POST")
 			{
-				$cnt->showPassword();
+				$cnt = $factory->getProfileController();
+				$cnt->updateProfilePicture($_POST);
+				
 			}
 			break;
-			
-		case "/updateSubscription":
-			{
-				if ($_SERVER["REQUEST_METHOD"] === "POST")
-				{
-					$cnt = $factory->getSubscriptionController();
-					$cnt->updateSubscription($_POST);
-					break;
-				}
-			}
-			
-		case "/updateprofilepicture":
-			{
-				if ($_SERVER["REQUEST_METHOD"] === "POST")
-				{
-					$cnt = $factory->getProfileController();
-					$cnt->updateProfilePicture($_POST);
-					break;
-				}
-			}
+		
 			
 	default:
 		$matches = [];
@@ -188,6 +190,14 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			}
 		}
 		
+		if (preg_match("|^/media/(.*)/file$|", $_SERVER["REQUEST_URI"], $matches))
+		{
+			$cnt = $factory->getPictureController();
+			$cnt->renderPicture($matches[1]);
+			break;
+		}
+		
+		
 		// find profile of user
 		if (preg_match("|^/(.+)$|", $_SERVER["REQUEST_URI"], $matches))
 		{
@@ -197,13 +207,6 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 				$cnt->showProfile($matches[1]);
 				break;			
 			}
-		}
-		
-		if (preg_match("|^/post/(\d+)/image$|", $_SERVER["REQUEST_URI"], $matches))
-		{
-			$cnt = $factory->getPictureController();
-			$cnt->renderPicture($matches[1]);
-			break;
 		}
 		
 		$factory->getIndexController()->showIndex();

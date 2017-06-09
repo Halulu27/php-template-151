@@ -48,7 +48,6 @@ class ProfileController
 		}
 		$user = $this->profileService->getUser($userId);
 		$account["user"] = $user;
-		
 		if (isset($user["mediaId"]))
 		{
 			// get image content;
@@ -74,8 +73,7 @@ class ProfileController
 				$singlePost["comment"] = $allPosts[$i][2];
 				$mediaFile = $this->profileService->getMedia($allPosts[$i][1]);
 				$singlePost["uploadTime"] = $mediaFile["uploadTime"];
-				$singlePost["type"] = $mediaFile["type"];
-				$singlePost["content"] = base64_encode($mediaFile["content"]);
+				$singlePost["postId"] = $allPosts[$i][1];
 				$account["Posts"][$i] = $singlePost;
 			}			
 		}
@@ -135,18 +133,13 @@ class ProfileController
 	  	$profileMediaId = $this->profileService->getUser($_SESSION["Id"]);
 	  	if (isset($profileMediaId[1]))
 	  	{
-	  		// remove reference
-			$this->profileService->removeProfileMediaId($_SESSION["Id"]);
+	  		// referrence will be set to null automatically
 			$this->profileService->deleteMedia($profileMediaId[1]);
 	  	}
 	  	if (isset($data["changeProfilePicturecsrf"])) 
 	  	{
 	  		// upload image and refer to it
-	  		$tmpName  = $_FILES['picture']['tmp_name'];
-	  		$fp = fopen($tmpName, 'r');
-	  		$content = fread($fp, filesize($tmpName));
-	  		$content = addslashes($content);
-	  		fclose($fp);
+	  		$content = file_get_contents($_FILES['picture']['tmp_name']);
 	  		
 	  		$timeStamp = date('Y-m-d H:i:s');
 	  		if ($this->profileService->saveMedia($content, $_FILES["picture"]["type"], $timeStamp, $_SESSION["Id"]) != false)
