@@ -86,7 +86,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/updateSubscription":		
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{
-			$cnt = $factory->getSubscriptionController()->updateSubscription($_POST);
+			$factory->getSubscriptionController()->updateSubscription($_POST);
 		}
 		else
 		{
@@ -98,7 +98,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/updateprofilepicture":		
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
 		{
-			$cnt = $factory->getProfileController()->updateProfilePicture($_POST);
+			$factory->getProfileController()->updateProfilePicture($_POST);
 			
 		}
 		else
@@ -110,12 +110,20 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/search":
 		if ($_SERVER["REQUEST_METHOD"] === "GET")
 		{
-			$cnt = $factory->getIndexController()->searchUsernames($_GET);
+			$factory->getIndexController()->searchUsernames($_GET);
 			break;
 		}
 		header("Location: /");
 		break;
 		
+	case "/feed":
+		if ($_SERVER["REQUEST_METHOD"] === "GET")
+		{
+			$factory->getFeedController()->showFeed();
+			break;
+		}
+		header("Location: /");
+		break;
 			
 	default:
 		$matches = [];

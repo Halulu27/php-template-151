@@ -23,11 +23,6 @@ class Factory
 		$this->config = $config;
 	}
 	
-	public function getTemplateEngine()
-	{
-		return new SimpleTemplateEngine(__DIR__ . "/../templates/");
-	}
-	
 	public function getIndexController()
 	{
 		return new Controller\IndexController($this->getTwigEngine(), $this->getSearchService());
@@ -56,6 +51,11 @@ class Factory
 	public function getSubscriptionController()
 	{
 		return new Controller\SubscriptionController($this->getTwigEngine(), $this->getSubscriptionService());
+	}
+	
+	public function getFeedController()
+	{
+		return new Controller\FeedController($this->getTwigEngine(), $this->getFeedService());
 	}
 	
 	public function getMailer()
@@ -105,6 +105,11 @@ class Factory
 	public function getSearchService()
 	{
 		return new Service\Search\SearchPdoService($this->getPdo());
+	}
+	
+	public function getFeedService()
+	{
+		return new Service\Feed\FeedPdoService($this->getPdo());
 	}
 
 	public function generateCsrf($csrfName)

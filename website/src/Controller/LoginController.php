@@ -199,6 +199,8 @@ class LoginController
   	{
   		$errormessage["username"] = "Username can only contain numbers, digits, . and _";
   	}
+  	// some usernames cannot be used e.g. "index", "login", etc.
+  	
   	if ($this->loginService->emailExists($data["email"]))
   	{
   		$errormessage["email"] = "Email existiert bereits";

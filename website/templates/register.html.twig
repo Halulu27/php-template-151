@@ -10,23 +10,28 @@ the email we sent you. Did not get an email? click here</p><a href="#"><</a>
 {% else %}
 <form action="/register" method="post">
   <div>
-  	<label>Email:<label/>
+  	<label>Email:</label>
   	<input type="email" id="email" name="email" value="{{ email }}" />
-  </div>
-  {% if errormessage.email != null %}
+  </div>  
+  {% if errormessage.email is not empty %}
   	<div>{{ errormessage.email }}</div>
   {% endif %}
-  <label>username:<label/>
-  <input type="text" id="username" name="username" value="{{ username }}"/><br/>
-  {% if errormessage.username != null %}
+  
+  <div>
+      <label>username:</label>
+      <input type="text" id="username" name="username" value="{{ username }}" />
+  </div>
+  {% if errormessage.username is not empty %}
   	<div>{{ errormessage.username }}</div>
   {% endif %}
-  <label>Password:<label/>
-  <input type="password" name="password" value="" /><br/><br/>
-  {% if errormessage.password != null %}
+  <div>
+      <label>Password:</label>
+      <input type="password" id="password" name="password" />
+  </div>
+  {% if errormessage.password is not empty %}
   	<div>{{ errormessage.password }}</div>
   {% endif %}
-  <input type="hidden" name="registercsrf" value="{{ registercsrf }}">
+  <input type="hidden" name="registercsrf" value="{{ registercsrf }}" />
   <input id="submit" type="submit" value="Register" />
 </form>
 

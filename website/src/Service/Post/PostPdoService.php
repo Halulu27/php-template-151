@@ -13,10 +13,12 @@ class PostPdoService implements PostService
 	
 	public function savePost($userId, $mediaId, $comment)
 	{
-		$stmt = $this->pdo->prepare("INSERT INTO post (userId, mediaId, comment) VALUES (?, ?, ?);");
+		$timestamp = date('Y-m-d H:i:s');
+		$stmt = $this->pdo->prepare("INSERT INTO post (userId, mediaId, comment, uploadTime) VALUES (?, ?, ?, ?);");
 		$stmt->bindValue(1, $userId);
 		$stmt->bindValue(2, $mediaId);
 		$stmt->bindValue(3, $comment);
+		$stmt->bindValue(4, $timestamp);
 		return $stmt->execute();
 	}
 	

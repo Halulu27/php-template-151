@@ -13,6 +13,8 @@
 	<div Id="bodycontent">
         {% if SESSION.username != "" %}
         	<div>
+        		<a href="/feed">Feed</a>
+        		<a href="/">Search</a>
         		<a href="/{{ SESSION.username }}">Profile</a>
         	</div>
         	<div>

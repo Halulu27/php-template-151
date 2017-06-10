@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+	{{ parent() }} - Feed
+{% endblock %}
+{% block content %}
+<div>
+	<p>Socialize Feed</p>
+</div>
+{% if feed is not empty %}
+<div>
+	Posts
+	{% for singlePost in feed %}
+		<div>
+			<div><a href="/{{ singlePost.username }}">{{ singlePost.username }}</a></div>
+			<div>
+            	<img alt="post file" src="/media/{{ singlePost.mediaId }}/file" />
+            </div>
+            <div>
+                {{ singlePost.uploadTime|date("d.m.Y") }}
+                {{ singlePost.comment }}
+            </div>
+		</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
