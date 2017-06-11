@@ -9,7 +9,6 @@ $factory = halulu27\Factory::createFromInitFile(__DIR__. "/../config.ini");
 $pdo = $factory->getPdo();
 $loginService = $factory->getLoginService();
 
-
 switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/":
 		$factory->getIndexController()->homepage();
@@ -110,7 +109,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/search":
 		if ($_SERVER["REQUEST_METHOD"] === "GET")
 		{
-			$factory->getIndexController()->searchUsernames($_GET);
+			$factory->getIndexController()->search($_GET);
 			break;
 		}
 		header("Location: /");
@@ -156,19 +155,25 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		{
 			$cnt = $factory->getPictureController()->renderPicture($matches[1]);
 			break;
-		}		
-		
+		}
+
 		// find profile of user
 		if (preg_match("|^/(.+)$|", $_SERVER["REQUEST_URI"], $matches))
 		{
-			if (preg_match('/[A-Za-z0-9._]/', $matches[1]))
+			// find hashtag
+			if (preg_match('/%23([A-Za-z0-9._]+)$/', $matches[1]))
+			{
+				$factory->getHashtagController()->showHashtag($matches[1]);
+				break;
+			}
+			if (preg_match('/[A-Za-z0-9._]$/', $matches[1]))
 			{
 				$factory->getProfileController()->showProfile($matches[1]);
 				break;
 			}
 			header("Location: /");
 			break;
-		}
+		}		
 		
 		$factory->getIndexController()->homepage();
 }

@@ -12,18 +12,22 @@ the email we sent you. Did not get an email? click here</p><a href="#"><</a>
   <div>
   	<label>Email:</label>
   	<input type="email" id="email" name="email" value="{{ email }}" />
-  </div>  
-  {% if errormessage.email is not empty %}
-  	<div>{{ errormessage.email }}</div>
-  {% endif %}
+  </div>
+  <div id="emailerrormessage">
+      {% if errormessage.email is not empty %}
+      	{{ errormessage.email }}
+      {% endif %}
+  </div>
   
   <div>
       <label>username:</label>
       <input type="text" id="username" name="username" value="{{ username }}" />
   </div>
-  {% if errormessage.username is not empty %}
-  	<div>{{ errormessage.username }}</div>
-  {% endif %}
+  <div id="usernameerrormessage">
+      {% if errormessage.username is not empty %}
+      	{{ errormessage.username }}
+      {% endif %}
+  </div>
   <div>
       <label>Password:</label>
       <input type="password" id="password" name="password" />
@@ -43,10 +47,8 @@ the email we sent you. Did not get an email? click here</p><a href="#"><</a>
 	      url: '/register/checkemail',
 	      data: {'email' : emailInput.val()},
 	      success: function (response){
-	  		if (response == true)		  		
-				console.log("email existiert" + response);
-			else
-				console.log("email nicht vorhanden" + response);
+	  		if (response == true)	
+		  		$("#emailerrormessage").html("Email existiert bereits");
 	      },
 	      error: function(e){
 	        console.log("Da isch edn error passiert! ;(");
@@ -65,9 +67,7 @@ the email we sent you. Did not get an email? click here</p><a href="#"><</a>
       	data: {'username' : usernameInput.val()},
       	success: function (answer){
   			if (answer == true)
-				console.log("username existiert" + answer);
-			else
-				console.log("username nicht vorhanden" + answer);
+  	  			$("#usernameerrormessage").html("Username existiert bereits");
       	},
       	error: function(e){
         	console.log("Error while checking username! ;(");

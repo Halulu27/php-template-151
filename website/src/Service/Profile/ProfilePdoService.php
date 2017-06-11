@@ -13,7 +13,7 @@ class ProfilePdoService implements ProfileService
 	
 	public function getPosts($userId)
 	{
-		$stmt = $this->pdo->prepare("SELECT Id, mediaId, comment FROM post WHERE userId=?;");
+		$stmt = $this->pdo->prepare("SELECT Id, mediaId, comment, uploadTime FROM post WHERE userId=? ORDER BY uploadTime DESC;");
 		$stmt->bindValue(1, $userId);
 		$stmt->execute();
 		if ($stmt->rowCount() > 0)
@@ -22,12 +22,12 @@ class ProfilePdoService implements ProfileService
 			$i = 0;
 			while ($row = $stmt->fetch($this->pdo::FETCH_NUM, $this->pdo::FETCH_ORI_NEXT)) 
 			{
-				$data[$i][0] = $row[0];
-				$data[$i][1] = $row[1];
-				$data[$i][2] = $row[2];
+				$data[$i]["Id"] = $row[0];
+				$data[$i]["mediaId"] = $row[1];
+				$data[$i]["comment"] = $row[2];
+				$data[$i]["uploadTime"] = $row[3];
 				$i++;
 			}
-			//$result = $stmt->fetch();
 			return $data;
 		}
 		return false;
@@ -154,6 +154,38 @@ class ProfilePdoService implements ProfileService
 		{
 			$result = $stmt->fetch();
 			return $result["Id"];
+		}
+		return false;
+	}
+	
+	public function getHashtagIds($postId)
+	{
+		$stmt = $this->pdo->prepare("SELECT hashtagId FROM posthashtag WHERE postId=?;");
+		$stmt->bindValue(1, $postId);
+		$stmt->execute();
+		if ($stmt->rowCount() > 0)
+		{
+			$data = array();
+			$i = 0;
+			while ($row = $stmt->fetch($this->pdo::FETCH_NUM, $this->pdo::FETCH_ORI_NEXT))
+			{
+				$data[$i][0] = $row[0];
+				$i++;
+			}
+			return $data;
+		}
+		return false;
+	}
+	
+	public function getHashtagName($hashtagId)
+	{
+		$stmt = $this->pdo->prepare("SELECT name FROM hashtag WHERE Id=?;");
+		$stmt->bindValue(1, $hashtagId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			$result = $stmt->fetch();
+			return $result["name"];
 		}
 		return false;
 	}

@@ -9,4 +9,8 @@ interface FeedService
 	public function getUsername($userId);
 	
 	public function getSubscriptions($userId);
+	
+	public function getHashtagIds($postId);
+	
+	public function getHashtagName($hashtagId);
 }

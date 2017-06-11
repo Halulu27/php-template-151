@@ -27,4 +27,8 @@ interface ProfileService
 	public function saveMedia($content, $type, $timeStamp, $userId);
 	
 	public function getMediaId($userId, $timeStamp);
+	
+	public function getHashtagIds($postId);
+	
+	public function getHashtagName($hashtagId);
 }

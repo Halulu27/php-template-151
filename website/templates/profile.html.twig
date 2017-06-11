@@ -80,11 +80,18 @@
 	{% for singlePost in account.Posts %}
 		<div>
 			<div>
-            	<img alt="post file" src="/media/{{ singlePost.postId }}/file" />
+            	<img alt="post file" src="/media/{{ singlePost.mediaId }}/file" />
+            </div>
+            <div>
+                <strong>{{ singlePost.uploadTime|date("d.m.Y") }}</strong>
             </div>
             <div>
                 {{ singlePost.comment }}
-                {{ singlePost.uploadTime|date("d.m.Y") }}
+            </div>
+            <div>
+                {% for hashtag in singlePost.hashtags %}
+                    <a href="/%23{{ hashtag.name }}">#{{ hashtag.name }}</a>           		
+                {% endfor %}
             </div>
 		</div>
     {% endfor %}

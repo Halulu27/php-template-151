@@ -64,4 +64,36 @@ class FeedPdoService implements FeedService
 		}
 		return false;
 	}
+	
+	public function getHashtagIds($postId)
+	{
+		$stmt = $this->pdo->prepare("SELECT hashtagId FROM posthashtag WHERE postId=?;");
+		$stmt->bindValue(1, $postId);
+		$stmt->execute();
+		if ($stmt->rowCount() > 0)
+		{
+			$data = array();
+			$i = 0;
+			while ($row = $stmt->fetch($this->pdo::FETCH_NUM, $this->pdo::FETCH_ORI_NEXT))
+			{
+				$data[$i][0] = $row[0];
+				$i++;
+			}
+			return $data;
+		}
+		return false;
+	}
+	
+	public function getHashtagName($hashtagId)
+	{
+		$stmt = $this->pdo->prepare("SELECT name FROM hashtag WHERE Id=?;");
+		$stmt->bindValue(1, $hashtagId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			$result = $stmt->fetch();
+			return $result["name"];
+		}
+		return false;
+	}
 }

@@ -40,6 +40,14 @@ class FeedController
 			for ($i = 0; $i < count($allPosts); $i++)
 			{
 				$allPosts[$i]["username"] = $this->feedService->getUsername($allPosts[$i]["userId"]);
+				$allHashtagIds = $this->feedService->getHashtagIds($allPosts[$i]["Id"]);
+				if ($allHashtagIds != false)
+				{
+					for ($e = 0; $e < count($allHashtagIds); $e++)
+					{
+						$allPosts[$i]["hashtags"][$e] = $this->feedService->getHashtagName($allHashtagIds[$e][0]);						
+					}
+				}
 			}
 			echo $this->template->render("feed.html.twig", ["feed" => $allPosts]);
 			return;			

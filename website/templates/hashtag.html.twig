@@ -4,12 +4,12 @@
 {% endblock %}
 {% block content %}
 <div>
-	<p>Socialize Feed</p>
+	<p>Socialize Hashtag {{ hashtag }}</p>
 </div>
-{% if feed is not empty %}
+{% if posts is not empty %}
 <div>
 	Posts
-	{% for singlePost in feed %}
+	{% for singlePost in posts %}
 		<div>
 			<div><a href="/{{ singlePost.username }}">{{ singlePost.username }}</a></div>
 			<div>

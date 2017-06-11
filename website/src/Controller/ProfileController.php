@@ -57,15 +57,26 @@ class ProfileController
 		
 		if ($account["PostNumber"] > 0)
 		{
-			$allPosts = $this->profileService->getPosts($userId);		
+			$allPosts = $this->profileService->getPosts($userId);
 			$singlePost = array();
 			for ($i = 0; $i < $account["PostNumber"]; $i++)
 			{
-				$singlePost["Id"] = $allPosts[$i][0];
-				$singlePost["comment"] = $allPosts[$i][2];
-				$mediaFile = $this->profileService->getMedia($allPosts[$i][1]);
-				$singlePost["uploadTime"] = $mediaFile["uploadTime"];
-				$singlePost["postId"] = $allPosts[$i][1];
+				$singlePost["Id"] = $allPosts[$i]["Id"];
+				$singlePost["mediaId"] = $allPosts[$i]["mediaId"];
+				$singlePost["comment"] = $allPosts[$i]["comment"];
+				$singlePost["uploadTime"] = $allPosts[$i]["uploadTime"];
+				$allHashtagIds = $this->profileService->getHashtagIds($singlePost["Id"]);
+				if ($allHashtagIds != false)
+				{
+					for ($e = 0; $e < count($allHashtagIds); $e++)
+					{
+						$singlePost["hashtags"][$e]["name"] = $this->profileService->getHashtagName($allHashtagIds[$e][0]);
+					}
+				}
+				for ($x = 0; $x < count($allHashtagIds); $x++)
+				{
+					$allHashtagIds[$x] = NULL;					
+				}
 				$account["Posts"][$i] = $singlePost;
 			}			
 		}

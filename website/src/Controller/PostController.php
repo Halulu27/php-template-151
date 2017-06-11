@@ -43,18 +43,9 @@ class PostController
 	  		$this->showAddPost("failed");
 	  		return;
 	  	}
-	  	/*if (!array_key_exists("comment", $data) OR !array_key_exists("file", $data) OR !array_key_exists("hashtag", $data))
-	  	{
-	  		$this->showAddPost();
-	  		return;
-	  	}*/
 	  	
 	  	// check if all needed things are filled out
 	  	$errormessage = array();
-	  	/*if (!isset($data["file"]))
-	  	{
-	  		$errormessage["file"] = "Upload your image or video";
-	  	}*/
 	  	if ($_FILES['file']['type'] != "image/jpg" && $_FILES['file']['type'] != "image/png" && $_FILES['file']['type'] != "image/jpeg" && $_FILES['file']['type'] != "image/gif"/* && $_FILES['file']['type'] != "file/mp4"*/)
 	  	{
 	  		$errormessage["file"] = "Only JPG, JPEG, PNG, GIF and MP4 files are allowed!";
@@ -76,12 +67,12 @@ class PostController
 	  			if (preg_match("|#([A-Za-z0-9._]+)$|", $hashtag[$i], $hashtagresult))
 	  			{
 	  				// hashtag matches the hashtag pattern	  				
-	  				if ($this->postService->findHashtagId($hashtagresult[0]) == false)
+	  				if ($this->postService->findHashtagId($hashtagresult[1]) == false)
 	  				{
 	  					// If the Hashtag does not exist
-	  					$this->postService->saveHashtag($hashtagresult[0]);
+	  					$this->postService->saveHashtag($hashtagresult[1]);
 	  				}
-	  				$hashtagId[$i] = $this->postService->findHashtagId($hashtagresult[0]);
+	  				$hashtagId[$i] = $this->postService->findHashtagId($hashtagresult[1]);
 	  			}
 	  		}
 	  	}

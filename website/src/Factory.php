@@ -58,6 +58,11 @@ class Factory
 		return new Controller\FeedController($this->getTwigEngine(), $this->getFeedService());
 	}
 	
+	public function getHashtagController()
+	{
+		return new Controller\HashtagController($this->getTwigEngine(), $this->getHashtagService());
+	}
+	
 	public function getMailer()
 	{
 		return \Swift_Mailer::newInstance(
@@ -110,6 +115,11 @@ class Factory
 	public function getFeedService()
 	{
 		return new Service\Feed\FeedPdoService($this->getPdo());
+	}
+	
+	public function getHashtagService()
+	{
+		return new Service\Hashtag\HashtagPdoService($this->getPdo());
 	}
 
 	public function generateCsrf($csrfName)

@@ -15,26 +15,33 @@ class IndexController
      $this->searchService = $searchService;
   }
 
-  public function homepage($usernames = "") 
+  public function homepage($usernames = "", $hashtags = "") 
   {
-  	echo $this->template->render("index.html.twig", ["usernames" => $usernames]);
+  	echo $this->template->render("index.html.twig", ["usernames" => $usernames, "hashtags" => $hashtags]);
   }
   
-  public function searchUsernames($getData)
+  public function search($getData)
   {
 	if (!isset($_SESSION["isLoggedIn"]))
 	{
 		$this->homepage();
 		return;
 	}
-	
-	if (!isset($getData["username"]) OR preg_match('|[^A-Za-z0-9._]$|', $getData["username"]))
+	if (isset($getData["searchusername"]) AND !preg_match('|[^A-Za-z0-9._]$|', $getData["searchusername"]))
 	{
-		$this->homepage();
+		$usernames = $this->searchService->getMatchingUsernames($getData["searchusername"]);
+	  	$this->homepage($usernames);		
 		return;
 	}
-	
-	$usernames = $this->searchService->getMatchingUsernames($getData["username"]);
-  	$this->homepage($usernames);
+	else if (isset($getData["searchhashtag"]) AND !preg_match('|#[^A-Za-z0-9._]$|', $getData["searchhashtag"]))
+	{
+		if (preg_match("|#([A-Za-z0-9._]+)$|", $getData["searchhashtag"]));
+		{
+			$hashtags = $this->searchService->getMatchingHashtag($getData["searchhashtag"]);
+			$this->homepage("", $hashtags);
+			return;			
+		}
+	}
+	$this->homepage();
   }
 }

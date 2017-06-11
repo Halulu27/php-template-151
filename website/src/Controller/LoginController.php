@@ -200,7 +200,10 @@ class LoginController
   		$errormessage["username"] = "Username can only contain numbers, digits, . and _";
   	}
   	// some usernames cannot be used e.g. "index", "login", etc.
-  	
+  	elseif ($data["username"] == "index" OR $data["username"] == "login" OR $data["username"] == "logout" OR $data["username"] == "register" OR $data["username"] == "addpost" OR $data["username"] == "password" OR $data["username"] == "updateSubscription" OR $data["username"] == "password" OR $data["username"] == "updateprofilepicture" OR $data["username"] == "search" OR $data["username"] == "feed")
+  	{
+  		$errormessage["username"] = "This username cannot be used!";
+  	}
   	if ($this->loginService->emailExists($data["email"]))
   	{
   		$errormessage["email"] = "Email existiert bereits";

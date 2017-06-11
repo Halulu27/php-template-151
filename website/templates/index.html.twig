@@ -6,17 +6,17 @@
 <div>
 	<p>Welcome to Socialize</p>
 </div>
+{% if SESSION.isLoggedIn == true %}
 <div>
 	Search for user
     <form action="/search" method="get">
       <div>
-      	<label>username:<label/>
-      	<input type="text" id="username" name="username" value="" placeholder="username" />
+      	<label>username:</label>
+      	<input type="text" id="searchinput" name="searchusername" placeholder="username" />
       </div>
-      <input id="submit" type="submit" value="Search" />
+      <input id="searchsubmit" type="submit" value="Search" />
     </form>
     
-    founded usernames
     <div>
         {% if usernames is not empty %}
         	{% for username in usernames %}
@@ -27,27 +27,28 @@
         		</div>
             {% endfor %}
         {% endif %}
+    </div>    
+    
+    Search for Hashtag
+    <form action="/search" method="get">
+    	<div>
+    		<label>Hashtag:</label>
+    		<input type="text" id="searchinput" name="searchhashtag" value="#" />
+    	</div>
+    	<input id="searchsubmit" type="submit" value="Search" />
+    </form>
+    
+    <div>
+        {% if hashtags is not empty %}
+        	{% for name in hashtags %}
+        		<div>
+                    <div>
+                        <a href="/%23{{ name }}">#{{ name }}</a>
+                    </div>
+        		</div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
-
-<script type="text/javascript">
-	$("#username").change(function (e) {
-	    var usernameInput = $(e.target);
-	    $.ajax({
-	      type: 'GET',
-	      url: '/search',
-	      data: {'username' : usernameInput.val()},
-	      success: function (response){
-	  		if (response == true)		  		
-				console.log("email existiert" + response);
-			else
-				console.log("email nicht vorhanden" + response);
-	      },
-	      error: function(e){
-	        console.log("Da isch edn error passiert! ;(");
-	        console.log(e);
-	      }
-	    });
-	  });
-</script>
+{% endif %}
 {% endblock %}
