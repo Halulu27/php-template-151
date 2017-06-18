@@ -168,14 +168,14 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		}
 		
 		// Edit Post
-		if (preg_match("|^/editPost/(.*)/$|", $_SERVER["REQUEST_URI"], $matches))
+		/*if (preg_match("|^/editPost/(.*)/$|", $_SERVER["REQUEST_URI"], $matches))
 		{
 			if (preg_match("/\d+$/", $matches[1]))
 			{
 				$factory->getPostController()->editPost($matches[1]);
 				return;
 			}
-		}
+		}*/
 		
 		// Like/Unlike Post
 		if (preg_match("|^/like/(.*)/(.*)/$|", $_SERVER["REQUEST_URI"], $matches))
