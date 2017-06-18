@@ -13,4 +13,8 @@ interface FeedService
 	public function getHashtagIds($postId);
 	
 	public function getHashtagName($hashtagId);
+	
+	public function getLikesNumber($postId);
+	
+	public function getLiked($postId, $userId);
 }

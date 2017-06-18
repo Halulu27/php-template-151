@@ -36,9 +36,7 @@ class PostPdoService implements PostService
 		return false;
 	}
 	
-	/* 
-	
-	public function getMediaId($postId)
+	public function getPostMediaId($postId)
 	{
 		$stmt = $this->pdo->prepare("SELECT mediaId FROM post WHERE Id=?;");
 		$stmt->bindValue(1, $postId);
@@ -46,10 +44,10 @@ class PostPdoService implements PostService
 		if ($stmt->rowCount() == 1)
 		{
 			$result = $stmt->fetch();
-			return $result["Id"];
+			return $result[0][0];
 		}
-		return false;
-	} */
+		return false;		
+	}
 	
 	public function deletePost($Id)
 	{
@@ -170,5 +168,38 @@ class PostPdoService implements PostService
 			return $result;
 		}
 		return false;
+	}
+	
+	public function findLike($postId, $userId)
+	{
+		$stmt = $this->pdo->prepare("SELECT Id FROM `like` WHERE postId=? AND userId=?;");
+		$stmt->bindValue(1, $postId);
+		$stmt->bindValue(2, $userId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			$result = $stmt->fetch();
+			return $result[0][0];
+		}
+		return false;
+	}
+	
+	public function deleteLike($likeId)
+	{
+		$stmt = $this->pdo->prepare("DELETE FROM `like` WHERE Id=?;");
+		$stmt->bindValue(1, $likeId);
+		if ($stmt->execute())
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public function saveLike($postId, $userId)
+	{
+		$stmt = $this->pdo->prepare("INSERT INTO `like` (postId, userId) VALUES (?, ?);");
+		$stmt->bindValue(1, $postId);
+		$stmt->bindValue(2, $userId);
+		return $stmt->execute();
 	}
 }

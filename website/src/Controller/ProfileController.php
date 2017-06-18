@@ -65,6 +65,8 @@ class ProfileController
 				$singlePost["mediaId"] = $allPosts[$i]["mediaId"];
 				$singlePost["comment"] = $allPosts[$i]["comment"];
 				$singlePost["uploadTime"] = $allPosts[$i]["uploadTime"];
+				$singlePost["likes"] = $this->profileService->getLikesNumber($allPosts[$i]["Id"]);
+				$singlePost["liked"] = $this->profileService->getLiked($singlePost["Id"], $_SESSION["Id"]);
 				$allHashtagIds = $this->profileService->getHashtagIds($singlePost["Id"]);
 				if ($allHashtagIds != false)
 				{
@@ -75,7 +77,7 @@ class ProfileController
 				}
 				for ($x = 0; $x < count($allHashtagIds); $x++)
 				{
-					$allHashtagIds[$x] = NULL;					
+					$allHashtagIds[$x] = "0";					
 				}
 				$account["Posts"][$i] = $singlePost;
 			}			

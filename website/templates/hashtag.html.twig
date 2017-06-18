@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <div>
-	<p>Socialize Hashtag {{ hashtag }}</p>
+	<h2>Socialize Hashtag {{ hashtag }}</h2>
 </div>
 {% if posts is not empty %}
 <div>
@@ -23,8 +23,16 @@
             </div>
             <div>
                 {% for hashtag in singlePost.hashtags %}
-            		{{ hashtag.name }}
+            		<a href="/%23{{ hashtag }}">#{{ hashtag }}</a>
                 {% endfor %}
+            </div> 
+            <div>
+            	{{ singlePost.likes }}
+            	{% if singlePost.liked == true %}
+            		<a href="/like/{{ singlePost.Id }}/feed/">Unlike</a>
+                {% else %}
+            		<a href="/like/{{ singlePost.Id }}/feed/">Like</a>
+            	{% endif %}
             </div>
 		</div>
     {% endfor %}

@@ -200,7 +200,7 @@ class LoginController
   		$errormessage["username"] = "Username can only contain numbers, digits, . and _";
   	}
   	// some usernames cannot be used e.g. "index", "login", etc.
-  	elseif ($data["username"] == "index" OR $data["username"] == "login" OR $data["username"] == "logout" OR $data["username"] == "register" OR $data["username"] == "addpost" OR $data["username"] == "password" OR $data["username"] == "updateSubscription" OR $data["username"] == "password" OR $data["username"] == "updateprofilepicture" OR $data["username"] == "search" OR $data["username"] == "feed")
+  	elseif ($data["username"] == "index" OR $data["username"] == "login" OR $data["username"] == "logout" OR $data["username"] == "register" OR $data["username"] == "addpost" OR $data["username"] == "password" OR $data["username"] == "updateSubscription" OR $data["username"] == "password" OR $data["username"] == "updateprofilepicture" OR $data["username"] == "search" OR $data["username"] == "feed" OR $data["username"] == "like" OR $data["username"] == "editPost" OR $data["username"] == "deletePost")
   	{
   		$errormessage["username"] = "This username cannot be used!";
   	}

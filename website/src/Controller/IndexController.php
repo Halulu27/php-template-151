@@ -35,9 +35,14 @@ class IndexController
 	}
 	else if (isset($getData["searchhashtag"]) AND !preg_match('|#[^A-Za-z0-9._]$|', $getData["searchhashtag"]))
 	{
-		if (preg_match("|#([A-Za-z0-9._]+)$|", $getData["searchhashtag"]));
+		$matches = array();
+		if (preg_match("|#([A-Za-z0-9._]+)$|", $getData["searchhashtag"], $matches));
 		{
-			$hashtags = $this->searchService->getMatchingHashtag($getData["searchhashtag"]);
+			if (!isset($matches[1]))
+			{
+				$matches[1] = "";
+			}
+			$hashtags = $this->searchService->getMatchingHashtag($matches[1]);
 			$this->homepage("", $hashtags);
 			return;			
 		}

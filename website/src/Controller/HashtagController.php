@@ -22,7 +22,6 @@ class HashtagController
 		header("Location: /");
 		return;
 	}
-	
   	$hashtagId = $this->hashtagService->getHashtagId($hashtagName);
   	$allPostIds = $this->hashtagService->getPostIds($hashtagId);
   	if ($allPostIds != false)
@@ -31,7 +30,7 @@ class HashtagController
   		$postIds = "Id = " .$allPostIds[0][0];
   		for ($i = 1; $i < count($allPostIds); $i++)
   		{
-  			$postIds .= " OR userId = " . $allPostIds[$i][0];
+  			$postIds .= " OR Id = " . $allPostIds[$i][0];
   		}
   		$allPosts = $this->hashtagService->getAllPosts($postIds);
   		
@@ -39,13 +38,16 @@ class HashtagController
   		{
   			for ($i = 0; $i < count($allPosts); $i++)
   			{
-  				$allPosts[$i]["username"] = $this->feedService->getUsername($allPosts[$i]["userId"]);
-  				$allHashtagIds = $this->feedService->getHashtagIds($allPosts[$i]["Id"]);
+  				$allPosts[$i]["likes"] = $this->hashtagService->getLikesNumber($allPosts[$i]["Id"]);
+  				$allPosts[$i]["liked"] = $this->hashtagService->getLiked($allPosts[$i]["Id"], $_SESSION["Id"]);
+  				
+  				$allPosts[$i]["username"] = $this->hashtagService->getUsername($allPosts[$i]["userId"]);
+  				$allHashtagIds = $this->hashtagService->getHashtagIds($allPosts[$i]["Id"]);
   				if ($allHashtagIds != false)
   				{
-  					for ($i = 0; $i < count($allHashtagIds); $i++)
+  					for ($e = 0; $e < count($allHashtagIds); $e++)
   					{
-  						$allPosts[$i]["hashtags"][$i] = $this->feedService->getHashtagName($allHashtagIds[$i][0]);
+  						$allPosts[$i]["hashtags"][$e] = $this->hashtagService->getHashtagName($allHashtagIds[$e][0]);
   					}
   				}
   			}
@@ -53,5 +55,6 @@ class HashtagController
   			return;
   		}
   	}
+  	header("Location: /");
   }
 }

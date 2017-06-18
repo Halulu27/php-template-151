@@ -21,7 +21,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 	case "/login":
 		$cnt = $factory->getLoginController();
 		if ($_SERVER["REQUEST_METHOD"] === "POST")
-		{	
+		{
 			$cnt->login($_POST);
 		}
 		else 
@@ -156,16 +156,50 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			$cnt = $factory->getPictureController()->renderPicture($matches[1]);
 			break;
 		}
+		
+		// Delete Post
+		if (preg_match("|^/deletePost/(.*)/$|", $_SERVER["REQUEST_URI"], $matches))
+		{
+			if (preg_match("/\d+$/", $matches[1]))
+			{
+				$factory->getPostController()->removePost($matches[1]);
+				return;
+			}
+		}
+		
+		// Edit Post
+		if (preg_match("|^/editPost/(.*)/$|", $_SERVER["REQUEST_URI"], $matches))
+		{
+			if (preg_match("/\d+$/", $matches[1]))
+			{
+				$factory->getPostController()->editPost($matches[1]);
+				return;
+			}
+		}
+		
+		// Like/Unlike Post
+		if (preg_match("|^/like/(.*)/(.*)/$|", $_SERVER["REQUEST_URI"], $matches))
+		{
+			if (preg_match("/\d+$/", $matches[1]))
+			{
+				$factory->getPostController()->like($matches[1], $matches[2]);
+				return;
+			}
+		}
 
-		// find profile of user
 		if (preg_match("|^/(.+)$|", $_SERVER["REQUEST_URI"], $matches))
 		{
 			// find hashtag
 			if (preg_match('/%23([A-Za-z0-9._]+)$/', $matches[1]))
 			{
-				$factory->getHashtagController()->showHashtag($matches[1]);
-				break;
+				$endMatch = array();
+				if (preg_match("|%23([A-Za-z0-9._]+)$|", $matches[1], $endMatch));
+				{
+					$factory->getHashtagController()->showHashtag($endMatch[1]);
+					break;
+				}
 			}
+			// find profile of user
 			if (preg_match('/[A-Za-z0-9._]$/', $matches[1]))
 			{
 				$factory->getProfileController()->showProfile($matches[1]);
@@ -173,7 +207,7 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			}
 			header("Location: /");
 			break;
-		}		
+		}
 		
 		$factory->getIndexController()->homepage();
 }

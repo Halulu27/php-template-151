@@ -29,4 +29,12 @@ interface  PostService
 	public function deleteHashtagPost($hashtagId, $postId);
 	
 	public function findHashtagPosts($postId);
+	
+	public function getPostMediaId($postId);
+	
+	public function findLike($postId, $userId);
+	
+	public function saveLike($postId, $userId);
+	
+	public function deleteLike($likeId);
 }

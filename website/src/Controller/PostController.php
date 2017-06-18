@@ -29,6 +29,37 @@ class PostController
 		echo $this->template->render("addpost.html.twig", ["addpostcsrf" => $csrf, "comment" => $comment, "hashtag" => $hashtag, "errormessage" => $errormessage]);
 	}
 	
+	public function editPost($postId)
+	{
+		return;
+	}
+	
+	public function like($postId, $returnUrl)
+	{
+		if (!isset($_SESSION["isLoggedIn"]))
+		{
+			header("Location: /");
+			return;
+		}
+		
+		if (!isset($postId))
+		{
+			header("Location: /");
+			return;
+		}
+		
+		$likeId = $this->postService->findLike($postId, $_SESSION["Id"]);
+		if ($likeId != false)
+		{
+			$this->postService->deleteLike($likeId);
+		}
+		else 
+		{
+			$this->postService->saveLike($postId, $_SESSION["Id"]);
+		}
+		header("Location: /" . $returnUrl);
+	}
+	
 	public function savePost(array $data)
 	{
 		// Only if you are logged in you are allowed to use Socialize!
@@ -120,6 +151,15 @@ class PostController
 			return;
 		}
 		
+		$hashtagPostIds = $this->postService->findHashtagPosts($postId);
+		for ($i = 0; $i < count($hashtagPostIds); $i++)
+		{
+			$this->postService->deleteHashtagPost($hashtagPostIds[$i], $postId);			
+		}
+		$this->postService->deleteMedia($this->postService->getPostMediaId($postId));
+		$this->postService->deletePost($postId);
+		header("Location: /" . $_SESSION["username"]);
+		return;
 	}
 }
 

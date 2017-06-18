@@ -189,4 +189,29 @@ class ProfilePdoService implements ProfileService
 		}
 		return false;
 	}
+	
+	public function getLikesNumber($postId)
+	{
+		$stmt = $this->pdo->prepare("SELECT COUNT(userId) FROM `like` WHERE postId=?;");
+		$stmt->bindValue(1, $postId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			$result = $stmt->fetch();
+			return $result[0];
+		}
+	}
+	
+	public function getLiked($postId, $userId)
+	{
+		$stmt = $this->pdo->prepare("SELECT Id FROM `like` WHERE postId=? AND userId=?;");
+		$stmt->bindValue(1, $postId);
+		$stmt->bindValue(2, $userId);
+		$stmt->execute();
+		if ($stmt->rowCount() == 1)
+		{
+			return true;
+		}
+		return false;
+	}
 }
