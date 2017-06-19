@@ -103,7 +103,10 @@
             </div>
             {% if SESSION.username == account.user.username %}
                 <div>
-                	<a href="/deletePost/{{ singlePost.Id }}/">Delete</a>
+                	<form action="/deletePost/{{ singlePost.Id }}/" method="post">
+                		<input hidden="hidden" id="removePostcsrf" name="removePostcsrf" value="{{ account.removePostcsrf }}">
+                		<input type="submit" id="deletePost" value="Delete" >
+                	</form>
                 </div>
             {% endif %}
 		</div>		

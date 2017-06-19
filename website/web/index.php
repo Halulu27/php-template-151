@@ -162,8 +162,11 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		{
 			if (preg_match("/\d+$/", $matches[1]))
 			{
-				$factory->getPostController()->removePost($matches[1]);
-				return;
+				if ($_SERVER["REQUEST_METHOD"] === "POST")
+				{
+					$factory->getPostController()->removePost($_POST, $matches[1]);
+					return;					
+				}
 			}
 		}
 		

@@ -10,7 +10,7 @@ interface  PostService
 	
 	public function deletePost($Id);
 	
-	//public function getMediaId($postId);
+	public function deleteLikes($postId);
 	
 	public function saveMedia($content, $type, $mediaTimeStamp, $userId);
 	

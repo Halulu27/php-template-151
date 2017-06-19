@@ -49,6 +49,13 @@ class PostPdoService implements PostService
 		return false;		
 	}
 	
+	public function deleteLikes($postId)
+	{
+		$stmt = $this->pdo->prepare("DELETE FROM `like` WHERE postId=?;");
+		$stmt->bindValue(1, $postId);
+		return $stmt->execute();
+	}
+	
 	public function deletePost($Id)
 	{
 		$stmt = $this->pdo->prepare("DELETE FROM post WHERE Id=?;");

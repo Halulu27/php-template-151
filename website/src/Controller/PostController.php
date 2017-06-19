@@ -25,7 +25,7 @@ class PostController
 			return;
 		}
 		
-		$csrf = $this->factory->generateCsrf("addpost");
+		$csrf = $this->factory->generateCsrf("addpostcsrf");
 		echo $this->template->render("addpost.html.twig", ["addpostcsrf" => $csrf, "comment" => $comment, "hashtag" => $hashtag, "errormessage" => $errormessage]);
 	}
 	
@@ -131,13 +131,13 @@ class PostController
 	  	$this->showAddPost($data["comment"], $data["hashtag"]);
 	}
 	
-	public function removePost($postId)
+	public function removePost($data, $postId)
 	{
-		/* if (!array_key_exists("addpostcsrf", $_POST) && !isset($_POST["addpostcsrf"]) && trim($_POST["addpostcsrf"]) == '' && $_SESSION["addpostcsrf"] != $_POST["addpostcsrf"])
+		if (!array_key_exists("removePostcsrf", $data) && !isset($data["removePostcsrf"]) && trim($data["removePostcsrf"]) == '' && $_SESSION["removePostcsrf"] != $data["removePostcsrf"])
 		{
-			$this->showAddPost();
+			header("Location: /");
 			return;
-		} */
+		}
 		// Only if you are logged in you are allowed to use Socialize!
 		if (!isset($_SESSION["isLoggedIn"]))
 		{
@@ -157,6 +157,7 @@ class PostController
 			$this->postService->deleteHashtagPost($hashtagPostIds[$i], $postId);			
 		}
 		$this->postService->deleteMedia($this->postService->getPostMediaId($postId));
+		$this->postService->deleteLikes($postId);
 		$this->postService->deletePost($postId);
 		header("Location: /" . $_SESSION["username"]);
 		return;

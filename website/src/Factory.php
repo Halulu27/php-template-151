@@ -25,7 +25,7 @@ class Factory
 	
 	public function getIndexController()
 	{
-		return new Controller\IndexController($this->getTwigEngine(), $this->getSearchService());
+		return new Controller\IndexController($this->getTwigEngine(), $this->getSearchService(), $this);
 	}
 	
 	public function getLoginController()
@@ -125,7 +125,7 @@ class Factory
 	public function generateCsrf($csrfName)
 	{
 		$csrf = $this->generateString(50);
-		$_SESSION[$csrfName . "csrf"] = $csrf;
+		$_SESSION[$csrfName] = $csrf;
 		return $csrf;
 	}
 	

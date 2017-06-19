@@ -8,21 +8,29 @@ class IndexController
 {
   private $template;
   private $searchService;
+  private $factory;
   
-  public function __construct(\Twig_Environment $template, SearchService $searchService)
+  public function __construct(\Twig_Environment $template, SearchService $searchService, $factory)
   {
      $this->template = $template;
      $this->searchService = $searchService;
+     $this->factory = $factory;
   }
 
   public function homepage($usernames = "", $hashtags = "") 
   {
-  	echo $this->template->render("index.html.twig", ["usernames" => $usernames, "hashtags" => $hashtags]);
+  	$csrf = $this->factory->generateCsrf("searchcsrf");
+  	echo $this->template->render("index.html.twig", ["usernames" => $usernames, "hashtags" => $hashtags, "searchcsrf" => $csrf]);
   }
   
   public function search($getData)
   {
 	if (!isset($_SESSION["isLoggedIn"]))
+	{
+		$this->homepage();
+		return;
+	}
+	if (!array_key_exists("searchcsrf", $getData) && !isset($getData["searchcsrf"]) && trim($getData["searchcsrf"]) == '' && $_SESSION["searchcsrf"] != $getData["searchcsrf"])
 	{
 		$this->homepage();
 		return;

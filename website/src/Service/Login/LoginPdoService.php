@@ -82,23 +82,33 @@ class LoginPdoService implements LoginService
 		
 	public function userActivation($activationString1, $activationString2)
 	{
-		$stmt = $this->pdo->prepare("SELECT * FROM user WHERE active=0 AND activationString1=? AND activationString2=?;");
-		$stmt->bindValue(1, $activationString1);
-		$stmt->bindValue(2, $activationString2);
-		$stmt->execute();
-		
-		if ($stmt->rowCount() == 1)
-		{
-			// Set user to active
-			$result = $stmt->fetch();
-			$stmt = $this->pdo->prepare("UPDATE user SET active=1, activationString1=null, activationString2=null WHERE Id=?;");
-			$stmt->bindValue(1, $result["Id"]);
+		try {
+			$this->pdo->beginTransaction();
+			$stmt = $this->pdo->prepare("SELECT * FROM user WHERE active=0 AND activationString1=? AND activationString2=?;");
+			$stmt->bindValue(1, $activationString1);
+			$stmt->bindValue(2, $activationString2);
 			$stmt->execute();
-			return true;
+			
+			if ($stmt->rowCount() == 1)
+			{
+				// Set user to active
+				$result = $stmt->fetch();
+				$stmt = $this->pdo->prepare("UPDATE user SET active=1, activationString1=null, activationString2=null WHERE Id=?;");
+				$stmt->bindValue(1, $result["Id"]);
+				$stmt->execute();
+				$this->pdo->commit();
+				return true;
+			}
+			else
+			{
+				$this->pdo->rollBack();
+				return false;
+			}
 		}
-		else
+		catch (\PDOException $e)
 		{
-			return false;
+			$this->pdo->rollBack();
+			throw new UserActivationException("Something went wrong");
 		}		
 	}
 	
@@ -119,6 +129,7 @@ class LoginPdoService implements LoginService
 	
 	public function resetPassword($username, $resetString1, $resetString2)
 	{
+		$this->pdo->beginTransaction();
 		$stmt = $this->pdo->prepare("UPDATE user SET resetString1=?, resetString2=? WHERE username=? OR email=?;");
 		$stmt->bindValue(1, $resetString1);
 		$stmt->bindValue(2, $resetString2);
@@ -132,9 +143,11 @@ class LoginPdoService implements LoginService
 			if ($stmt->execute() AND $stmt->rowCount() == 1)
 			{
 				$result = $stmt->fetch();
+				$this->pdo->commit();
 				return $result["email"];
 			}
 		}
+		$this->pdo->commit();
 		return false;
 	}
 	
@@ -144,15 +157,7 @@ class LoginPdoService implements LoginService
 		$stmt->bindValue(1, $password);
 		$stmt->bindValue(2, $email);
 		$stmt->bindValue(3, $email);
-		$result = $stmt->execute();
-		if ($result)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $stmt->execute();
 	}
 	
 	public function registration($username, $email, $password, $activationString1, $activationString2)
@@ -163,14 +168,7 @@ class LoginPdoService implements LoginService
 		$stmt->bindValue(3, $password);
 		$stmt->bindValue(4, $activationString1);
 		$stmt->bindValue(5, $activationString2);
-		if ($stmt->execute())
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $stmt->execute();
 	}
 	
 	public function authenticate($user, $password)

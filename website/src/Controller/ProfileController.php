@@ -33,7 +33,8 @@ class ProfileController
 			return;
 		}
 		// csrf for subscribing to another user
-		$account["addSubscriptioncsrf"] = $this->factory->generateCsrf("addSubscription");
+		$account["addSubscriptioncsrf"] = $this->factory->generateCsrf("addSubscriptioncsrf");
+		$account["removePostcsrf"] = $this->factory->generateCsrf("removePostcsrf");
 		if ($username != $_SESSION["username"])
 		{
 			$account["subscribed"] = $this->profileService->isSubscribed($userId, $_SESSION["Id"]);
@@ -45,11 +46,11 @@ class ProfileController
 			// get image content;
 			//$account[""]		
 			// add removeCsrf
-			$account["removeProfilePicturecsrf"] = $this->factory->generateCsrf("removeProfilePicture");
+			$account["removeProfilePicturecsrf"] = $this->factory->generateCsrf("removeProfilePicturecsrf");
 		}
 		$account["changeProfilePicturecsrf"] = $this->factory->generateCsrf("changeProfilePicture");
 		// csrf for adding your profileimage
-		$account["addPicturecsrf"] = $this->factory->generateCsrf("addPicture");
+		$account["addPicturecsrf"] = $this->factory->generateCsrf("addPicturecsrf");
 
 		$account["PostNumber"] = $this->profileService->getPostNumber($userId);
 		$account["FollowerNumber"] = $this->profileService->getFollowerNumber($userId);

@@ -14,6 +14,7 @@
       	<label>username:</label>
       	<input type="text" id="searchinput" name="searchusername" placeholder="username" />
       </div>
+  	<input type="hidden" name="searchcsrf" value="{{ searchcsrf }}">
       <input id="searchsubmit" type="submit" value="Search" />
     </form>
     
@@ -35,6 +36,7 @@
     		<label>Hashtag:</label>
     		<input type="text" id="searchinput" name="searchhashtag" value="#" />
     	</div>
+  		<input type="hidden" name="searchcsrf" value="{{ searchcsrf }}">
     	<input id="searchsubmit" type="submit" value="Search" />
     </form>
     

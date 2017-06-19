@@ -24,9 +24,8 @@ class LoginController
 	{
 		header("Location: /");
 		return;
-	}
-	
-  	$csrf = $this->factory->generateCsrf("register");
+	}	
+  	$csrf = $this->factory->generateCsrf("registercsrf");
   	echo $this->template->render("register.html.twig", ["registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
@@ -39,19 +38,20 @@ class LoginController
 	}
   	
   	session_regenerate_id();
-  	$csrf = $this->factory->generateCsrf("login");
+  	$csrf = $this->factory->generateCsrf("logincsrf");
   	echo $this->template->render("login.html.twig", ["logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
   }
   
   public function showPassword($reset = false)
   {
-  	$csrf = $this->factory->generateCsrf("password");
+  	$csrf = $this->factory->generateCsrf("passwordcsrf");
   	echo $this->template->render("password.html.twig", ["passwordcsrf" => $csrf, "reset" => $reset]);
   }
   
   public function showResetPassword($resetString1, $resetString2, $errormessage = "")
   {
-  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
+  	$csrf = $this->factory->generateCsrf("showpasswordcsrf");
+  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage, "showpasswordcsrf" => $csrf]);
   }
   
   public function checkEmail($email)
@@ -114,6 +114,11 @@ class LoginController
   	if (!array_key_exists("password", $data) OR !array_key_exists("confirmpassword", $data))
   	{
   		$this->showResetPassword($resetString1, $resetString2);
+  		return;
+  	}
+  	if (!array_key_exists("showpasswordcsrf", $data) && !isset($data["showpasswordcsrf"]) && trim($data["showpasswordcsrf"]) == '' && $_SESSION["showpasswordcsrf"] != $data["showpasswordcsrf"])
+  	{
+  		$this->homepage();
   		return;
   	}
   	
@@ -305,8 +310,7 @@ class LoginController
 	{
 		header("Location: /");
 		return;
-	}
-  	
+	}  	
   	session_destroy();
 	header("Location: /");
   }
