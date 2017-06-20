@@ -34,9 +34,8 @@ CREATE TABLE `like` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `like` (`Id`, `userId`, `postId`) VALUES
-(5,	7,	19),
-(6,	7,	17),
-(7,	7,	16);
+(13,	7,	20),
+(22,	7,	19);
 
 DROP TABLE IF EXISTS `media`;
 CREATE TABLE `media` (
@@ -117,7 +116,8 @@ INSERT INTO `subscription` (`Id`, `followerId`, `userId`) VALUES
 (3,	7,	14),
 (4,	13,	14),
 (5,	14,	7),
-(6,	7,	13);
+(6,	7,	13),
+(8,	7,	16);
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -131,7 +131,6 @@ CREATE TABLE `user` (
   `activationString2` varchar(255) DEFAULT NULL,
   `resetString1` varchar(255) DEFAULT NULL,
   `resetString2` varchar(255) DEFAULT NULL,
-  `slogan` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
@@ -143,10 +142,11 @@ CREATE TABLE `user` (
   CONSTRAINT `user_ibfk_5` FOREIGN KEY (`mediaId`) REFERENCES `media` (`Id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` (`Id`, `email`, `username`, `password`, `mediaId`, `active`, `activationString1`, `activationString2`, `resetString1`, `resetString2`, `slogan`) VALUES
-(7,	'simon.odermatt@hotmail.ch',	'halulu27',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e',	62,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL,	NULL),
-(13,	'test@test.com',	'test',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e',	NULL,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL,	NULL),
-(14,	'text@text.com',	'text',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e',	57,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL,	NULL),
-(15,	'a@b.com',	'hoi',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e	',	NULL,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL,	NULL);
+INSERT INTO `user` (`Id`, `email`, `username`, `password`, `mediaId`, `active`, `activationString1`, `activationString2`, `resetString1`, `resetString2`) VALUES
+(7,	'simon.odermatt@hotmail.ch',	'halulu27',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e',	62,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL),
+(13,	'test@test.com',	'test',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e',	NULL,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL),
+(14,	'text@text.com',	'text',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e',	57,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL),
+(15,	'a@b.com',	'hoi',	'$2y$10$MTZGRcA6c4wi7Fw8z9OO3OUKrEj5IU0Q5gdLY/FdmN.q986xti30e	',	NULL,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL),
+(16,	'odermatt.simon@gmail.com',	'peterhans',	'$2y$10$LUvu8oQVgHEYXSGTjOSNa.htQJHuXkuC3xPuAukrDwB219GC1tBfy',	NULL,	CONV('1', 2, 10) + 0,	NULL,	NULL,	NULL,	NULL);
 
--- 2017-06-19 18:05:53
+-- 2017-06-20 20:05:46
