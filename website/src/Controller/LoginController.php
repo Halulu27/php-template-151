@@ -104,7 +104,7 @@ class LoginController
   
   public function resetPassword(array $data, $resetString1, $resetString2)
   {
-  	$email = $cnt->checkResetString($resetString1, $resetString2);
+  	$email = $this->checkResetString($resetString1, $resetString2);
   	if ($email == false)
   	{
   		header("Location: /");
@@ -142,11 +142,12 @@ class LoginController
   	if ($this->loginService->renewPassword($email, $passwordhash) == true)
   	{
   		$this->showLogin();
+  		return;
   	}
   	else
   	{
   		$this->showResetPassword($resetString1, $resetString2, "");
-  		header("Location: /");
+  		return;
   	}
   }
   
@@ -234,6 +235,7 @@ class LoginController
 					<a href="' . $link . '">' . $link .'</a></div>';
   		$this->sendEmail("Activate your account", $data["email"], $message);
   		$this->showRegister("", "", "", true);
+  		return;
   	}
   	$errormessage["email"] = "Failed hard";
   	$this->showRegister($data["email"], $data["username"], $errormessage);

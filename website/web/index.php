@@ -146,7 +146,6 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 			{
 				$cnt->resetPassword($_POST, $matches[1], $matches[2]);
 			}
-			header("Location: /");
 			break;
 		}
 		

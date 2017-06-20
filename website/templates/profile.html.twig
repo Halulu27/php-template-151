@@ -19,17 +19,17 @@
     	</div>
     </div>
 	<div>
-    	<div>
+    	<div id="profileInfoContainer">
+    		<div id="profileInfo">Anzahl Posts</div>
     		<div>{{ account.PostNumber }}</div>
-    		<div>Anzahl Posts</div>
     	</div>
-        <div>
+        <div id="profileInfoContainer">
+        	<div id="profileInfo">Anzahl Follower</div>
         	<div>{{ account.FollowerNumber }}</div>
-        	<div>Anzahl Follower</div>
         </div>
-        <div>
+        <div id="profileInfoContainer">
+        	<div id="profileInfo">Anzahl Abonnementen</div>
         	<div>{{ account.SubscriberNumber }}</div>
-        	<div>Anzahl Abonnementen</div>
         </div>
     </div>
 </div>
@@ -96,9 +96,9 @@
             <div>
             	{{ singlePost.likes }}
             	{% if singlePost.liked == true %}
-            		<a href="/like/{{ singlePost.Id }}/{{ account.user.username }}/">Unlike</a>
+            		<a href="/like/{{ singlePost.Id }}/{{ account.user.username }}/"><img id="likeheart" src="/pictures/like.png"/></a>
                 {% else %}
-            		<a href="/like/{{ singlePost.Id }}/{{ account.user.username }}/">Like</a>
+            		<a href="/like/{{ singlePost.Id }}/{{ account.user.username }}/"><img id="likeheart" src="/pictures/unlike.jpg"/></a>
             	{% endif %}
             </div>
             {% if SESSION.username == account.user.username %}

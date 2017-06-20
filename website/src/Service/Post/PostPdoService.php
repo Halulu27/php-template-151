@@ -186,7 +186,7 @@ class PostPdoService implements PostService
 		if ($stmt->rowCount() == 1)
 		{
 			$result = $stmt->fetch();
-			return $result[0][0];
+			return $result[0];
 		}
 		return false;
 	}

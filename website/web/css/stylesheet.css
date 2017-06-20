@@ -32,3 +32,17 @@ input:invalid{
 #searchsubmit{
 	clear: left;
 }
+
+#profileInfo{
+	float: left;
+	min-width: 150px;
+}
+
+#likeheart{
+	width: 20px;
+	height: 20px;
+}
+
+#profileInfoContainer{
+	height: 30px;
+}

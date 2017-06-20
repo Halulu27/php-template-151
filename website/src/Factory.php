@@ -129,7 +129,7 @@ class Factory
 		return $csrf;
 	}
 	
-	private function generateString($length)
+	public function generateString($length)
 	{
 	  	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	  	$charactersLength = strlen($characters);

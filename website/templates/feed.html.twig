@@ -8,10 +8,9 @@
 </div>
 {% if feed is not empty %}
 <div>
-	Posts
 	{% for singlePost in feed %}
 		<div>
-			<div><a href="/{{ singlePost.username }}">{{ singlePost.username }}</a></div>
+			<div><a href="/{{ singlePost.username }}"><h5>{{ singlePost.username }}</h5></a></div>
 			<div>
             	<img alt="post file" src="/media/{{ singlePost.mediaId }}/file" />
             </div>
@@ -30,9 +29,9 @@
             <div>
             	{{ singlePost.likes }}
             	{% if singlePost.liked == true %}
-            		<a href="/like/{{ singlePost.Id }}/feed/">Unlike</a>
+            		<a href="/like/{{ singlePost.Id }}/feed/"><img id="likeheart" src="/pictures/like.png"/></a>
                 {% else %}
-            		<a href="/like/{{ singlePost.Id }}/feed/">Like</a>
+            		<a href="/like/{{ singlePost.Id }}/feed/"><img id="likeheart" src="/pictures/unlike.jpg"/></a>
             	{% endif %}
             </div>
 		</div>
