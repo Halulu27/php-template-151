@@ -25,8 +25,8 @@ class LoginController
 		header("Location: /");
 		return;
 	}	
-  	$csrf = $this->factory->generateCsrf("registercsrf");
-  	echo $this->template->render("register.html.twig", ["registercsrf" => $csrf, "email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
+  	$this->factory->generateCsrf("registercsrf");
+  	echo $this->template->render("register.html.twig", ["email" => $email, "username" => $username, "errormessage" => $errormessage, "confirm" => $confirmation]);
   }
   
   public function showLogin($username = "", $errormessage = "")
@@ -38,20 +38,20 @@ class LoginController
 	}
   	
   	session_regenerate_id();
-  	$csrf = $this->factory->generateCsrf("logincsrf");
-  	echo $this->template->render("login.html.twig", ["logincsrf" => $csrf, "username" => $username, "errormessage" => $errormessage]);
+  	$this->factory->generateCsrf("logincsrf");
+  	echo $this->template->render("login.html.twig", ["username" => $username, "errormessage" => $errormessage]);
   }
   
   public function showPassword($reset = false)
   {
-  	$csrf = $this->factory->generateCsrf("passwordcsrf");
-  	echo $this->template->render("password.html.twig", ["passwordcsrf" => $csrf, "reset" => $reset]);
+  	$this->factory->generateCsrf("passwordcsrf");
+  	echo $this->template->render("password.html.twig", ["reset" => $reset]);
   }
   
   public function showResetPassword($resetString1, $resetString2, $errormessage = "")
   {
-  	$csrf = $this->factory->generateCsrf("showpasswordcsrf");
-  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage, "showpasswordcsrf" => $csrf]);
+  	$this->factory->generateCsrf("showpasswordcsrf");
+  	echo $this->template->render("resetpassword.html.twig", ["resetString1" => $resetString1, "resetString2" => $resetString2, "errormessage" => $errormessage]);
   }
   
   public function checkEmail($email)
@@ -298,6 +298,7 @@ class LoginController
 			$_SESSION["username"] = $result["username"];
 			$_SESSION["Id"] = $result["Id"];
 			$_SESSION["isLoggedIn"] = true;
+			$this->factory->generateCsrf("logoutcsrf");
 	  		header("Location: /");
 	  		return;
   		}
@@ -312,7 +313,13 @@ class LoginController
 	{
 		header("Location: /");
 		return;
-	}  	
+	}
+	
+	if (!array_key_exists("logoutcsrf", $data) && !isset($data["logoutcsrf"]) && trim($data["logoutcsrf"]) == '' && $_SESSION["logoutcsrf"] != $data["logoutcsrf"])
+	{
+		$this->showLogin();
+		return;
+	}
   	session_destroy();
 	header("Location: /");
   }
@@ -321,16 +328,19 @@ class LoginController
   {
 	if (!array_key_exists("passwordcsrf", $data) && !isset($data["passwordcsrf"]) && trim($data["passwordcsrf"]) == '' && $_SESSION["passwordcsrf"] != $data["passwordcsrf"])
 	{
-		return false;
+  		$this->showPassword();
+		return;
 	}	
   	else if (!array_key_exists("username", $data))
   	{
-  		return false;
+  		$this->showPassword();
+  		return;
   	}
   	// Check if form is filled out.
   	else if (!isset($data["username"]) || trim($data["username"]) == '')
   	{
-  		return false;
+  		$this->showPassword();
+  		return;
   	}  	
 
   	$resetString1 = $this->generateLink();
@@ -343,6 +353,7 @@ class LoginController
 							<a href="' . $link . '">' . $link .'</a></div>';
   		$this->sendEmail("Reset password", $email, $message);
   		$this->showPassword(true);
+  		return;
   	}
   	$this->showPassword();
   }

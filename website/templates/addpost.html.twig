@@ -24,7 +24,7 @@
   <input type="text" id="hashtag" name="hashtag" value="{{ hashtag }}" /><br/><br/>
   
   <input type="hidden" name="MAX_FILE_SIZE" value="2000000">  
-  <input type="hidden" id="addpostcsrf" name="addpostcsrf" value="{{ addpostcsrf }}">
+  <input type="hidden" id="addpostcsrf" name="addpostcsrf" value="{{ SESSION.addpostcsrf }}">
   <input id="addpost" type="submit" value="Add Post" />
 </form>
 {% endblock %}

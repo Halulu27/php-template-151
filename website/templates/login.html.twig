@@ -13,7 +13,7 @@
   	<input type="password" name="password" value="" />
   </div>
   <div>{{ errormessage }}</div>
-  <input type="hidden" name="logincsrf" value="{{ logincsrf }}">
+  <input type="hidden" name="logincsrf" value="{{ SESSION.logincsrf }}">
   <input type="submit" value="Login" />
 </form>
 <a href="http://localhost/password">Forgot Password</a>

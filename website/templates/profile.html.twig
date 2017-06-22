@@ -82,18 +82,18 @@
 			<div>
             	<img alt="post file" src="/media/{{ singlePost.mediaId }}/file" />
             </div>
-            <div>
+            <div Id="postDivContent">
                 <strong>{{ singlePost.uploadTime|date("d.m.Y") }}</strong>
             </div>
-            <div>
+            <div Id="postDivContent">
                 {{ singlePost.comment }}
             </div>
-            <div>
+            <div Id="postDivContent">
                 {% for hashtag in singlePost.hashtags %}
                     <a href="/%23{{ hashtag.name }}">#{{ hashtag.name }}</a>           		
                 {% endfor %}
             </div>            
-            <div>
+            <div Id="postDivContent">
             	{{ singlePost.likes }}
             	{% if singlePost.liked == true %}
             		<a href="/like/{{ singlePost.Id }}/{{ account.user.username }}/"><img id="likeheart" src="/pictures/like.png"/></a>

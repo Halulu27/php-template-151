@@ -25,8 +25,8 @@ class PostController
 			return;
 		}
 		
-		$csrf = $this->factory->generateCsrf("addpostcsrf");
-		echo $this->template->render("addpost.html.twig", ["addpostcsrf" => $csrf, "comment" => $comment, "hashtag" => $hashtag, "errormessage" => $errormessage]);
+		$this->factory->generateCsrf("addpostcsrf");
+		echo $this->template->render("addpost.html.twig", ["comment" => $comment, "hashtag" => $hashtag, "errormessage" => $errormessage]);
 	}
 	
 	public function editPost($postId)

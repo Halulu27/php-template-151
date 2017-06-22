@@ -10,28 +10,28 @@
 <div>
 	Posts
 	{% for singlePost in posts %}
-		<div>
-			<div><a href="/{{ singlePost.username }}">{{ singlePost.username }}</a></div>
+		<div Id="postDiv">
+			<div Id="postDivContent"><a href="/{{ singlePost.username }}">{{ singlePost.username }}</a></div>
 			<div>
             	<img alt="post file" src="/media/{{ singlePost.mediaId }}/file" />
             </div>
-            <div>
+            <div Id="postDivContent">
                 <strong>{{ singlePost.uploadTime|date("d.m.Y") }}</strong>
             </div>
-            <div>
+            <div Id="postDivContent">
                 {{ singlePost.comment }}
             </div>
-            <div>
+            <div Id="postDivContent">
                 {% for hashtag in singlePost.hashtags %}
             		<a href="/%23{{ hashtag }}">#{{ hashtag }}</a>
                 {% endfor %}
             </div> 
-            <div>
+            <div Id="postDivContent">
             	{{ singlePost.likes }}
             	{% if singlePost.liked == true %}
-            		<a href="/like/{{ singlePost.Id }}/feed/">Unlike</a>
+            		<a href="/like/{{ singlePost.Id }}/%23{{ hashtag }}/"><img id="likeheart" src="/pictures/like.png"/></a>
                 {% else %}
-            		<a href="/like/{{ singlePost.Id }}/feed/">Like</a>
+            		<a href="/like/{{ singlePost.Id }}/%23{{ hashtag }}/"><img id="likeheart" src="/pictures/unlike.jpg"/></a>
             	{% endif %}
             </div>
 		</div>

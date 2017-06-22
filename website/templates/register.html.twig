@@ -35,7 +35,7 @@ the email we sent you. Did not get an email? Check your spam folder!
   {% if errormessage.password is not empty %}
   	<div>{{ errormessage.password }}</div>
   {% endif %}
-  <input type="hidden" name="registercsrf" value="{{ registercsrf }}" />
+  <input type="hidden" name="registercsrf" value="{{ SESSION.registercsrf }}" />
   <input id="submit" type="submit" value="Register" />
 </form>
 

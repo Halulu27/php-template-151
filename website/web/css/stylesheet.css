@@ -57,6 +57,12 @@ input:invalid{
     margin-bottom: 15px;
 }
 
+#postDivContent{
+	padding: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
 
 
 

@@ -22,7 +22,7 @@
         	</div>
         	<div>
             	<form action="/logout" method="post">
-              		<!-- <input type="hidden" name="logoutcsrf" value="{{ "logoutcsrf" }}"> -->
+              		<input type="hidden" name="logoutcsrf" value="{{ SESSION.logoutcsrf }}">
             		<input id="logout" type="submit" value="Logout" />
             	</form>
             </div>

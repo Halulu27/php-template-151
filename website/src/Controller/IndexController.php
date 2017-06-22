@@ -19,8 +19,8 @@ class IndexController
 
   public function homepage($usernames = "", $hashtags = "") 
   {
-  	$csrf = $this->factory->generateCsrf("searchcsrf");
-  	echo $this->template->render("index.html.twig", ["usernames" => $usernames, "hashtags" => $hashtags, "searchcsrf" => $csrf]);
+  	$this->factory->generateCsrf("searchcsrf");
+  	echo $this->template->render("index.html.twig", ["usernames" => $usernames, "hashtags" => $hashtags]);
   }
   
   public function search($getData)
