@@ -9,7 +9,7 @@
 {% if feed is not empty %}
 <div>
 	{% for singlePost in feed %}
-		<div>
+		<div Id="postDiv">
 			<div><a href="/{{ singlePost.username }}"><h5>{{ singlePost.username }}</h5></a></div>
 			<div>
             	<img alt="post file" src="/media/{{ singlePost.mediaId }}/file" />

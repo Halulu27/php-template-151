@@ -2,14 +2,15 @@ input:invalid{
 	border: 1px solid red;
 }
 
+#bodyDesign{
+	background-color: #fafafa;
+}
+
 #bodycontent{
 	margin-top: 10px;
 	margin-left: 35%;
 	margin-right: 35%;
 	width: 30%
-}
-
-#content{
 }
 
 #profilepicture{
@@ -46,3 +47,18 @@ input:invalid{
 #profileInfoContainer{
 	height: 30px;
 }
+
+#postDiv{
+	background-color: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    margin-left: -1px;
+    margin-right: -1px;    
+    margin-bottom: 15px;
+}
+
+
+
+
+
+
