@@ -8,11 +8,13 @@ class HashtagController
 {
   private $template;
   private $hashtagService;
+  private $factory;
   
-  public function __construct(\Twig_Environment $template, HashtagService $hashtagService)
+  public function __construct(\Twig_Environment $template, HashtagService $hashtagService, $factory)
   {
      $this->template = $template;
      $this->hashtagService = $hashtagService;
+     $this->factory = $factory;
   }
   
   public function showHashtag($hashtagName)
@@ -40,7 +42,7 @@ class HashtagController
   			{
   				$allPosts[$i]["likes"] = $this->hashtagService->getLikesNumber($allPosts[$i]["Id"]);
   				$allPosts[$i]["liked"] = $this->hashtagService->getLiked($allPosts[$i]["Id"], $_SESSION["Id"]);
-  				
+  				$allPosts[$i]["csrf"] = $this->factory->generateCsrf("like" . $allPosts[$i]["Id"] . "csrf");
   				$allPosts[$i]["username"] = $this->hashtagService->getUsername($allPosts[$i]["userId"]);
   				$allHashtagIds = $this->hashtagService->getHashtagIds($allPosts[$i]["Id"]);
   				if ($allHashtagIds != false)

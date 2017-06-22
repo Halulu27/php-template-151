@@ -8,11 +8,13 @@ class FeedController
 {
   private $template;
   private $feedService;
+  private $factory;
   
-  public function __construct(\Twig_Environment $template, FeedService $feedService)
+  public function __construct(\Twig_Environment $template, FeedService $feedService, $factory)
   {
      $this->template = $template;
      $this->feedService = $feedService;
+     $this->factory = $factory;
   }
   
   public function showFeed()
@@ -39,6 +41,7 @@ class FeedController
 		{
 			for ($i = 0; $i < count($allPosts); $i++)
 			{
+				$allPosts[$i]["csrf"] = $this->factory->generateCsrf("like" . $allPosts[$i]["Id"] . "csrf");
 				$allPosts[$i]["username"] = $this->feedService->getUsername($allPosts[$i]["userId"]);
 				$allPosts[$i]["likes"] = $this->feedService->getLikesNumber($allPosts[$i]["Id"]);
 				$allPosts[$i]["liked"] = $this->feedService->getLiked($allPosts[$i]["Id"], $_SESSION["Id"]);

@@ -94,12 +94,24 @@
                 {% endfor %}
             </div>            
             <div Id="postDivContent">
-            	{{ singlePost.likes }}
-            	{% if singlePost.liked == true %}
-            		<a href="/like/{{ singlePost.Id }}/{{ account.user.username }}/"><img id="likeheart" src="/pictures/like.png"/></a>
-                {% else %}
-            		<a href="/like/{{ singlePost.Id }}/{{ account.user.username }}/"><img id="likeheart" src="/pictures/unlike.jpg"/></a>
-            	{% endif %}
+            	<div Id="countedLikes">{{ singlePost.likes }}</div>
+            	<div Id="likerButton">
+                	{% if singlePost.liked == true %}
+                		<form action="/like" method="post">
+                			<input type="hidden" name="postId" value="{{ singlePost.Id }}" />
+                			<input type="hidden" name="returnUrl" value="{{ account.user.username }}" />
+                      		<input type="hidden" name="like{{ singlePost.Id }}csrf" value="{{ singlePost.csrf }}">
+                      		<input id="likeSubmit" type="submit" value="" />
+                    	</form>
+                    {% else %}
+                		<form action="/like" method="post">
+                			<input type="hidden" name="postId" value="{{ singlePost.Id }}" />
+                			<input type="hidden" name="returnUrl" value="{{ account.user.username }}" />
+                      		<input type="hidden" name="like{{ singlePost.Id }}csrf" value="{{ singlePost.csrf }}">
+                      		<input id="unlikeSubmit" type="submit" value="" />
+                    	</form>
+                	{% endif %}
+            	</div>
             </div>
             {% if SESSION.username == account.user.username %}
                 <div>

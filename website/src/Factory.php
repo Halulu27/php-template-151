@@ -55,12 +55,12 @@ class Factory
 	
 	public function getFeedController()
 	{
-		return new Controller\FeedController($this->getTwigEngine(), $this->getFeedService());
+		return new Controller\FeedController($this->getTwigEngine(), $this->getFeedService(), $this);
 	}
 	
 	public function getHashtagController()
 	{
-		return new Controller\HashtagController($this->getTwigEngine(), $this->getHashtagService());
+		return new Controller\HashtagController($this->getTwigEngine(), $this->getHashtagService(), $this);
 	}
 	
 	public function getMailer()

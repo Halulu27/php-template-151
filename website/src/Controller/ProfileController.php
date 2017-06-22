@@ -63,6 +63,7 @@ class ProfileController
 			for ($i = 0; $i < $account["PostNumber"]; $i++)
 			{
 				$singlePost["Id"] = $allPosts[$i]["Id"];
+				$singlePost["csrf"] = $this->factory->generateCsrf("like" . $singlePost["Id"] . "csrf");
 				$singlePost["mediaId"] = $allPosts[$i]["mediaId"];
 				$singlePost["comment"] = $allPosts[$i]["comment"];
 				$singlePost["uploadTime"] = $allPosts[$i]["uploadTime"];

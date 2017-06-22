@@ -63,8 +63,26 @@ input:invalid{
 	padding-right: 10px;
 }
 
+#likeSubmit{
+	background: url(/pictures/like.png) no-repeat;
+    height: 20px;
+    background-size: contain;
+    width: 20px;
+    border: none;
+}
 
+#unlikeSubmit{
+	background: url(/pictures/unlike.jpg) no-repeat;
+    height: 20px;
+    background-size: contain;
+    width: 20px;
+    border: none;
+}
 
+#countedLikes{
+	float: left;
+}
 
-
-
+#likerButton{
+	margin-left: 10px;
+}

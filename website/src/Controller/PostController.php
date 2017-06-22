@@ -34,7 +34,7 @@ class PostController
 		return;
 	}
 	
-	public function like($postId, $returnUrl)
+	public function like(array $data)
 	{
 		if (!isset($_SESSION["isLoggedIn"]))
 		{
@@ -42,22 +42,33 @@ class PostController
 			return;
 		}
 		
-		if (!isset($postId))
+		if (!array_key_exists("postId", $data) && !isset($data["postId"]))
+		{
+			header("Location: /");
+			return;
+		}
+		$csrfName = "like" . $data["postId"] . "csrf";
+		if (!array_key_exists($csrfName, $data) && !isset($data[$csrfName]) && trim($data[$csrfName]) == '' && $_SESSION[$csrfName] != $data[$csrfName])
+		{
+			header("Location: /");
+			return;
+		}
+		if (!array_key_exists("returnUrl", $data))
 		{
 			header("Location: /");
 			return;
 		}
 		
-		$likeId = $this->postService->findLike($postId, $_SESSION["Id"]);
+		$likeId = $this->postService->findLike($data["postId"], $_SESSION["Id"]);
 		if ($likeId != false)
 		{
 			$this->postService->deleteLike($likeId);
 		}
 		else 
 		{
-			$this->postService->saveLike($postId, $_SESSION["Id"]);
+			$this->postService->saveLike($data["postId"], $_SESSION["Id"]);
 		}
-		header("Location: /" . $returnUrl);
+		header("Location: /" . $data["returnUrl"]);
 	}
 	
 	public function savePost(array $data)

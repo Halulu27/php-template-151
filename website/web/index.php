@@ -123,6 +123,15 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 		}
 		header("Location: /");
 		break;
+		
+	case "/like":
+		if ($_SERVER["REQUEST_METHOD"] === "POST")
+		{
+			$factory->getPostController()->like($_POST);
+			break;
+		}
+		header("Location: /");
+		break;
 			
 	default:
 		$matches = [];
@@ -178,16 +187,6 @@ switch(strtok($_SERVER["REQUEST_URI"],'?')) {
 				return;
 			}
 		}*/
-		
-		// Like/Unlike Post
-		if (preg_match("|^/like/(.*)/(.*)/$|", $_SERVER["REQUEST_URI"], $matches))
-		{
-			if (preg_match("/\d+$/", $matches[1]))
-			{
-				$factory->getPostController()->like($matches[1], $matches[2]);
-				return;
-			}
-		}
 
 		if (preg_match("|^/(.+)$|", $_SERVER["REQUEST_URI"], $matches))
 		{
